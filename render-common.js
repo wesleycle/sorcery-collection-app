@@ -712,6 +712,20 @@
         '<p style="font-size:13px;color:var(--text-secondary);margin-top:-6px;margin-bottom:8px;">' + escapeHtml(fl.name) + "</p>" +
         '<div class="panel copy-entry"><div class="copy-entry-head">' +
         '<span class="qty-stepper qty-stepper-sm"><button data-listctx-minus>−</button><span class="qty-val">' + flItem.quantity + '</span><button data-listctx-plus>+</button></span>' +
+        '<select data-listctx-condition>' + CONDITION_LIST.map(function (c) {
+          return '<option value="' + c + '" ' + (flItem.condition === c ? "selected" : "") + '>' + c + "</option>";
+        }).join("") + '</select>' +
+        "</div>" +
+        '<div class="chip-row" style="margin-top:8px;">' +
+        '<span class="chip ' + (flItem.isFoil ? "active" : "") + '" data-listctx-toggle-flag="isFoil">' + Icon("sparkle", { cls: "icon-sm" }) + ' Foil</span>' +
+        '<span class="chip ' + (flItem.isPromo ? "active" : "") + '" data-listctx-toggle-flag="isPromo">' + Icon("ribbon", { cls: "icon-sm" }) + ' Promo</span>' +
+        '<span class="chip ' + (flItem.isCurio ? "active" : "") + '" data-listctx-toggle-flag="isCurio">' + Icon("gem", { cls: "icon-sm" }) + ' Curio</span>' +
+        "</div>" +
+        '<div class="form-inline" style="margin-top:8px;">' +
+        '<div class="form-row"><label>Preço pago</label><input type="number" step="0.01" data-listctx-price value="' + (flItem.pricePaid != null ? flItem.pricePaid : "") + '"></div>' +
+        '<div class="form-row"><label>Moeda</label><select data-listctx-currency>' + ["BRL", "USD", "EUR"].map(function (c) {
+          return '<option ' + ((flItem.currency || "BRL") === c ? "selected" : "") + '>' + c + "</option>";
+        }).join("") + '</select></div>' +
         "</div>" +
         '<div class="form-row" style="margin-top:8px;"><label>Observação</label><textarea data-listctx-notes placeholder="Notas sobre este item...">' + escapeHtml(flItem.notes || "") + "</textarea></div>" +
         '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">' +
@@ -932,6 +946,31 @@
         var item = flRef.items.find(function (i) { return i.cardId === cardId; });
         if (!item) return;
         State.updateListItem(flRef.id, cardId, { quantity: item.quantity + 1 });
+        openCardDetail(cardId, ctx);
+      };
+      var listConditionSel = root.querySelector("[data-listctx-condition]");
+      if (listConditionSel) listConditionSel.onchange = function () {
+        State.updateListItem(flRef.id, cardId, { condition: listConditionSel.value });
+        openCardDetail(cardId, ctx);
+      };
+      root.querySelectorAll("[data-listctx-toggle-flag]").forEach(function (chip) {
+        chip.onclick = function () {
+          var flag = chip.getAttribute("data-listctx-toggle-flag");
+          var item = flRef.items.find(function (i) { return i.cardId === cardId; });
+          var patch = {};
+          patch[flag] = !(item && item[flag]);
+          State.updateListItem(flRef.id, cardId, patch);
+          openCardDetail(cardId, ctx);
+        };
+      });
+      var listPriceInp = root.querySelector("[data-listctx-price]");
+      if (listPriceInp) listPriceInp.onchange = function () {
+        State.updateListItem(flRef.id, cardId, { pricePaid: listPriceInp.value ? parseFloat(listPriceInp.value) : undefined });
+        openCardDetail(cardId, ctx);
+      };
+      var listCurrencySel = root.querySelector("[data-listctx-currency]");
+      if (listCurrencySel) listCurrencySel.onchange = function () {
+        State.updateListItem(flRef.id, cardId, { currency: listCurrencySel.value });
         openCardDetail(cardId, ctx);
       };
       var listNotesTa = root.querySelector("[data-listctx-notes]");
