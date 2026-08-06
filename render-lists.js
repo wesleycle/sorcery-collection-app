@@ -9,7 +9,7 @@
 (function () {
   "use strict";
 
-  var filters = { types: [], sets: [], elements: [], rarities: [], costMax: 10, keyword: "", artist: "", foilOnly: false, curioOnly: false, query: "", sortBy: "name-asc" };
+  var filters = { types: [], sets: [], elements: [], rarities: [], conditions: [], costMax: 10, keyword: "", artist: "", foilOnly: false, curioOnly: false, query: "", sortBy: "name-asc" };
   var showFilters = false;
 
   function render(container, segments) {
@@ -210,7 +210,7 @@
     if (!slot) return;
     if (!showFilters) { slot.innerHTML = ""; return; }
     function onChange() { renderItems(container, list); updateFilterButtonBadge(container); }
-    slot.innerHTML = UI.renderFilterPanel(filters, onChange, {});
+    slot.innerHTML = UI.renderFilterPanel(filters, onChange, { showCondition: true, collectionSort: true });
     UI.wireFilterPanel(slot, filters, onChange, function () { renderFiltersPanel(container, list); });
   }
 
@@ -286,6 +286,16 @@
         return colEntries.some(function (ce) { return (!filters.foilOnly || ce.isFoil) && (!filters.curioOnly || ce.isCurio); });
       });
     }
+    // Condicao: mesmo criterio da Colecao - considera as entradas da colecao
+    // desta carta (um item de lista nao tem condicao propria; a condicao e
+    // sempre da copia fisica que o usuario possui). Itens de cartas que o
+    // usuario ainda nao tem na colecao nao passam nesse filtro.
+    if (filters.conditions && filters.conditions.length) {
+      entries = entries.filter(function (e) {
+        var colEntries = State.getCollectionEntriesForCard(e.card.id);
+        return colEntries.some(function (ce) { return filters.conditions.indexOf(ce.condition) !== -1; });
+      });
+    }
 
     if (!entries.length) {
       slot.innerHTML = '<div class="empty-state"><div class="big-icon">' + Icon("search") + "</div>" +
@@ -296,7 +306,15 @@
       return;
     }
 
-    var sortedCards = UI.sortCards(entries.map(function (e) { return e.card; }), filters.sortBy);
+    // "Data de adicao"/"Preco pago" (collectionSort) usam as mesmas entradas
+    // da colecao dessa carta, igual a Colecao - se a carta ainda nao estiver
+    // na colecao do usuario, entra com addedAt nulo/preco 0 (vai pro fim/
+    // conta como 0, sem quebrar a ordenacao).
+    var sortedCards = UI.sortCards(entries.map(function (e) { return e.card; }), filters.sortBy, function (c) {
+      var colEntries = State.getCollectionEntriesForCard(c.id);
+      var earliest = colEntries.reduce(function (min, ce) { return (!min || new Date(ce.addedAt) < new Date(min)) ? ce.addedAt : min; }, null);
+      return { addedAt: earliest, pricePaid: colEntries.reduce(function (s, ce) { return s + (ce.pricePaid || 0); }, 0) };
+    });
     var byId = {};
     entries.forEach(function (e) { byId[e.card.id] = e; });
     var sortedEntries = sortedCards.map(function (c) { return byId[c.id]; });
