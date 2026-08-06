@@ -7748,6 +7748,10 @@
         {
           "cardId": "got-makeshift_barricade",
           "quantity": 1
+        },
+        {
+          "cardId": "got-murder_of_crows",
+          "quantity": 1
         }
       ],
       "format": "Constructed",
@@ -7755,7 +7759,7 @@
       "sourceMode": "all",
       "isFavorite": false,
       "createdAt": "2026-08-06T19:15:32.739Z",
-      "updatedAt": "2026-08-06T19:16:53.698Z"
+      "updatedAt": "2026-08-06T19:16:58.423Z"
     }
   ],
   "lists": [
@@ -7780,7 +7784,7 @@
     "defaultCurrency": "BRL",
     "collectionViewMode": "grid",
     "catalogViewMode": "grid",
-    "deckViewMode": "build",
+    "deckViewMode": "list",
     "listsViewMode": "list",
     "lastCatalogUpdate": "2026-08-06T17:53:57.853Z",
     "driveImageIndexLastUpdate": "2026-08-04T02:22:50.015Z",
