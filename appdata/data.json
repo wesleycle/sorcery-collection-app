@@ -3460,19 +3460,6 @@
       "updatedAt": "2026-08-03T14:12:22.006Z"
     },
     {
-      "id": "e98d0c52-f291-4ee1-b9ee-422130d4bc39",
-      "cardId": "got-autumn_bloom",
-      "quantity": 2,
-      "condition": "NM",
-      "currency": "BRL",
-      "isFoil": false,
-      "isPromo": false,
-      "isCurio": false,
-      "notes": "",
-      "addedAt": "2026-08-03T14:12:22.014Z",
-      "updatedAt": "2026-08-06T19:08:35.761Z"
-    },
-    {
       "id": "5463ebd8-7f73-4a2a-b4f7-e5e03f98717b",
       "cardId": "got-avenging_angel",
       "quantity": 2,
@@ -7164,6 +7151,32 @@
       "addedAt": "2026-08-06T05:22:03.606Z",
       "updatedAt": "2026-08-06T05:24:09.495Z",
       "pricePaid": 50
+    },
+    {
+      "id": "e98d0c52-f291-4ee1-b9ee-422130d4bc39",
+      "cardId": "got-autumn_bloom",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-03T14:12:22.014Z",
+      "updatedAt": "2026-08-06T19:08:47.545Z"
+    },
+    {
+      "id": "d19fe477-499c-443f-90da-22596bfc83e9",
+      "cardId": "got-autumn_bloom",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-03T14:12:22.014Z",
+      "updatedAt": "2026-08-06T19:08:47.545Z"
     }
   ],
   "decks": [
