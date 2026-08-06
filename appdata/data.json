@@ -7150,6 +7150,19 @@
       "notes": "",
       "addedAt": "2026-08-03T14:12:26.271Z",
       "updatedAt": "2026-08-03T14:12:26.271Z"
+    },
+    {
+      "id": "9e002ee5-0a58-4d83-902e-5c4301419f2d",
+      "cardId": "alp-courtesan_thais",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-06T05:22:03.606Z",
+      "updatedAt": "2026-08-06T05:22:03.606Z"
     }
   ],
   "decks": [
