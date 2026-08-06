@@ -7454,7 +7454,10 @@
     {
       "id": "8e1bcb4b-c375-4f20-a68a-20157bb70dab",
       "name": "teste 5",
-      "avatar": null,
+      "avatar": {
+        "cardId": "got-necromancer",
+        "quantity": 1
+      },
       "atlas": [],
       "spellbook": [],
       "collection": [],
@@ -7463,7 +7466,7 @@
       "sourceMode": "all",
       "isFavorite": false,
       "createdAt": "2026-08-06T06:00:26.749Z",
-      "updatedAt": "2026-08-06T06:00:26.749Z"
+      "updatedAt": "2026-08-06T06:00:36.697Z"
     }
   ],
   "lists": [
