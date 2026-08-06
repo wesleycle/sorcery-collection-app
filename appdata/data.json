@@ -7423,7 +7423,10 @@
     {
       "id": "fc0bb49a-2a4d-4985-a4a8-553769d5e6d2",
       "name": "Teste 3",
-      "avatar": null,
+      "avatar": {
+        "cardId": "alp-deathspeaker",
+        "quantity": 1
+      },
       "atlas": [],
       "spellbook": [],
       "collection": [],
@@ -7432,7 +7435,7 @@
       "sourceMode": "all",
       "isFavorite": false,
       "createdAt": "2026-08-06T05:20:21.980Z",
-      "updatedAt": "2026-08-06T05:20:21.986Z"
+      "updatedAt": "2026-08-06T05:20:33.732Z"
     }
   ],
   "lists": [
