@@ -7421,17 +7421,7 @@
       "updatedAt": "2026-08-03T14:13:19.803Z"
     }
   ],
-  "lists": [
-    {
-      "id": "28bba931-a4ca-4602-b794-fe7dfeb72473",
-      "name": "__teste_sync__",
-      "description": "",
-      "items": [],
-      "isFavorite": false,
-      "createdAt": "2026-08-06T05:17:26.035Z",
-      "updatedAt": "2026-08-06T05:17:26.035Z"
-    }
-  ],
+  "lists": [],
   "settings": {
     "catalogUpdateUrl": "",
     "defaultCurrency": "BRL",
