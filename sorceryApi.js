@@ -166,84 +166,114 @@
     };
   }
 
-  // Devolve a lista bruta de cartas a partir do snapshot local (ver nota de
-  // CORS no topo do arquivo) - mantido como Promise pra nao mudar o contrato
-  // usado por updateCatalog() nem pela UI (settings mostra "Buscando..." etc).
-  function fetchApiCards() {
+  // Devolve a lista bruta de cartas a partir do snapshot local embutido no
+  // app (ver nota de CORS no topo do arquivo) - sem nenhuma chamada de rede.
+  // Usado pela checagem automatica e silenciosa no boot (ver app.js).
+  function fetchApiCardsFromSnapshot() {
     return new Promise(function (resolve, reject) {
       var json = window.SORCERY_API_CARDS_SNAPSHOT;
       if (!json) {
         reject(new Error("Snapshot da API (sorcery-api-cards-data.js) não foi carregado - confira o <script> em index.html."));
         return;
       }
-      var list = Array.isArray(json) ? json : (json.cards || json.data || []);
-      if (!Array.isArray(list) || !list.length) {
-        reject(new Error("Snapshot da API vazio ou em formato inesperado."));
-        return;
-      }
+      var list = extractCardList(json);
+      if (!list) { reject(new Error("Snapshot da API vazio ou em formato inesperado.")); return; }
       resolve(list);
     });
   }
 
-  // Busca a API, achata sets[]/variants[] em impressoes, e faz merge com o
-  // catalogo atual (data.catalog) SEM trocar o id de nenhuma carta ja
-  // existente - so atualiza os campos dela. Cartas novas (sets/edicoes que
-  // ainda nao existiam no catalogo) sao adicionadas com id novo.
-  // Retorna { added, updated, totalPrintings, totalApiCards }.
-  function updateCatalog() {
-    return fetchApiCards().then(function (apiCards) {
-      var catalog = State.getCatalog().slice(); // copia - mutamos entradas existentes in place, mas o array e novo
-      var byId = {};
-      var byNameSet = {};
-      catalog.forEach(function (c) {
-        byId[c.id] = c;
-        byNameSet[normalizeCardNameKey(c.name) + "|" + c.set] = c;
+  // Busca a API AO VIVO, via a Netlify Function que roda no servidor (sem
+  // CORS - ver netlify/functions/catalog-fetch.js). Usada pelo botao
+  // "Atualizar base cartas", pra pegar cartas/edicoes novas mesmo antes do
+  // snapshot local ser regenerado num proximo deploy.
+  function fetchApiCardsLive() {
+    return fetch("/.netlify/functions/catalog-fetch", { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) return res.text().then(function (t) { throw new Error("Falha ao buscar API ao vivo (" + res.status + "): " + t.slice(0, 200)); });
+        return res.json();
+      })
+      .then(function (json) {
+        var list = extractCardList(json);
+        if (!list) throw new Error("Resposta da API ao vivo vazia ou em formato inesperado.");
+        return list;
       });
+  }
 
-      var added = 0, updated = 0, totalPrintings = 0;
+  function extractCardList(json) {
+    var list = Array.isArray(json) ? json : (json.cards || json.data || []);
+    return (Array.isArray(list) && list.length) ? list : null;
+  }
 
-      apiCards.forEach(function (apiCard) {
-        var sets = apiCard.sets || [];
-        sets.forEach(function (setEntry) {
-          var fields = buildEntryFields(apiCard, setEntry);
-          if (!fields) return;
-          totalPrintings++;
-
-          var setCode = setCodeFor(fields.set);
-          var candidateId = setCode + "-" + underscoreSlug(fields.name);
-          var nameSetKey = normalizeCardNameKey(fields.name) + "|" + fields.set;
-
-          var existing = byId[candidateId] || byNameSet[nameSetKey];
-          if (existing) {
-            // Preserva id, keywords/rulings ja curados manualmente (a API
-            // publica nao expoe esses dois campos) - atualiza o resto.
-            Object.assign(existing, fields, {
-              id: existing.id,
-              keywords: existing.keywords || [],
-              rulings: existing.rulings || []
-            });
-            updated++;
-          } else {
-            var newId = candidateId;
-            var suffix = 2;
-            while (byId[newId]) { newId = candidateId + "-" + suffix; suffix++; }
-            var newCard = Object.assign({ id: newId, keywords: [], rulings: [] }, fields);
-            catalog.push(newCard);
-            byId[newId] = newCard;
-            byNameSet[nameSetKey] = newCard;
-            added++;
-          }
-        });
-      });
-
-      State.replaceCatalog(catalog);
-      return { added: added, updated: updated, totalPrintings: totalPrintings, totalApiCards: apiCards.length };
+  // Achata sets[]/variants[] em impressoes, e faz merge com o catalogo atual
+  // (data.catalog) SEM trocar o id de nenhuma carta ja existente - so
+  // atualiza os campos dela. Cartas novas (sets/edicoes que ainda nao
+  // existiam no catalogo) sao adicionadas com id novo. Retorna
+  // { added, updated, totalPrintings, totalApiCards }.
+  function mergeCatalog(apiCards) {
+    var catalog = State.getCatalog().slice(); // copia - mutamos entradas existentes in place, mas o array e novo
+    var byId = {};
+    var byNameSet = {};
+    catalog.forEach(function (c) {
+      byId[c.id] = c;
+      byNameSet[normalizeCardNameKey(c.name) + "|" + c.set] = c;
     });
+
+    var added = 0, updated = 0, totalPrintings = 0;
+
+    apiCards.forEach(function (apiCard) {
+      var sets = apiCard.sets || [];
+      sets.forEach(function (setEntry) {
+        var fields = buildEntryFields(apiCard, setEntry);
+        if (!fields) return;
+        totalPrintings++;
+
+        var setCode = setCodeFor(fields.set);
+        var candidateId = setCode + "-" + underscoreSlug(fields.name);
+        var nameSetKey = normalizeCardNameKey(fields.name) + "|" + fields.set;
+
+        var existing = byId[candidateId] || byNameSet[nameSetKey];
+        if (existing) {
+          // Preserva id, keywords/rulings ja curados manualmente (a API
+          // publica nao expoe esses dois campos) - atualiza o resto.
+          Object.assign(existing, fields, {
+            id: existing.id,
+            keywords: existing.keywords || [],
+            rulings: existing.rulings || []
+          });
+          updated++;
+        } else {
+          var newId = candidateId;
+          var suffix = 2;
+          while (byId[newId]) { newId = candidateId + "-" + suffix; suffix++; }
+          var newCard = Object.assign({ id: newId, keywords: [], rulings: [] }, fields);
+          catalog.push(newCard);
+          byId[newId] = newCard;
+          byNameSet[nameSetKey] = newCard;
+          added++;
+        }
+      });
+    });
+
+    State.replaceCatalog(catalog);
+    return { added: added, updated: updated, totalPrintings: totalPrintings, totalApiCards: apiCards.length };
+  }
+
+  // Atualizacao silenciosa a partir do snapshot embutido (sem rede) - usada
+  // no boot automatico (ver app.js).
+  function updateCatalog() {
+    return fetchApiCardsFromSnapshot().then(mergeCatalog);
+  }
+
+  // Atualizacao AO VIVO a partir da API oficial (via Netlify Function) - usada
+  // pelo botao "Atualizar base cartas" em Configuracoes.
+  function updateCatalogLive() {
+    return fetchApiCardsLive().then(mergeCatalog);
   }
 
   window.SorceryApi = {
     API_URL: API_URL,
     updateCatalog: updateCatalog,
+    updateCatalogLive: updateCatalogLive,
     // Exposto pra debug/teste manual no console do navegador.
     _internal: { parseElements: parseElements, underscoreSlug: underscoreSlug, stripFinishSuffix: stripFinishSuffix, pickRepresentativeVariant: pickRepresentativeVariant }
   };

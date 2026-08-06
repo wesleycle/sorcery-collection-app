@@ -27,7 +27,13 @@
       lastCatalogUpdate: null,
       // Ultima vez que o indice de imagens do Google Drive oficial (slug ->
       // ID do arquivo) foi atualizado - ver driveImageIndex abaixo.
-      driveImageIndexLastUpdate: null
+      driveImageIndexLastUpdate: null,
+      // Versoes dos snapshots embutidos (sorcery-api-cards-data.js e
+      // personal-drive-image-index-data.js) ja aplicadas nesse dispositivo -
+      // usadas por app.js pra decidir, no boot, se precisa reaplicar um
+      // snapshot mais novo automaticamente (ver applyBundledUpdatesIfNewer).
+      catalogSnapshotVersion: null,
+      personalImageIndexVersion: null
     };
   }
 

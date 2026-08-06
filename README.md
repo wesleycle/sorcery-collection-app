@@ -9,52 +9,19 @@ e o app funciona.
 
 ---
 
-## Requisito importante: use Google Chrome ou Microsoft Edge no computador
+## Como usar
 
-Este app usa a **File System Access API** do navegador para salvar seus dados
-automaticamente em um arquivo `data.json` no seu disco. Essa API **só existe no
-Google Chrome ou Microsoft Edge, no computador (Windows/Mac/Linux)** — não funciona
-no Firefox, Safari, nem em navegadores de celular.
+Acesse o app pelo navegador, no computador ou no celular:
+`https://magenta-haupia-ce5a8f.netlify.app`.
 
-- Se você usar Chrome ou Edge no PC: tudo funciona automaticamente, incluindo salvar
-  direto no arquivo.
-- Se você usar outro navegador: o app continua funcionando normalmente, mas os dados
-  ficam salvos apenas no armazenamento interno do navegador (localStorage) naquele
-  computador/navegador específico — use os botões de **Exportar/Importar Backup**
-  (em Configurações) para mover os dados entre navegadores/computadores.
-
----
-
-## Como usar pela primeira vez
-
-1. Copie a pasta inteira `sorcery-app` para onde quiser no seu computador (Área de
-   Trabalho, Documentos, ou dentro de uma pasta sincronizada do OneDrive — veja a
-   seção sobre OneDrive abaixo).
-2. Dê duplo clique em `index.html`. Ele abre no seu navegador padrão.
-   - Se o navegador padrão não for Chrome/Edge, abra manualmente com um deles
-     (clique com o botão direito no arquivo → Abrir com → Google Chrome/Edge).
-3. Assim que o app abrir, aparecerá uma barra amarela no topo:
-   **"💾 Conectar arquivo de dados (data.json)..."**
-   - Clique em **"Criar novo"** na primeira vez (isso cria o arquivo `data.json`
-     dentro da pasta do app). Escolha salvar dentro da própria pasta `sorcery-app`.
-   - Se você já tem um `data.json` de uma instalação anterior, clique em
-     **"Já tenho um"** e selecione o arquivo.
-4. Pronto! A partir daqui, toda ação que você fizer no app (adicionar carta, criar
-   deck, editar, etc.) é salva automaticamente nesse arquivo, sem precisar clicar
-   em "salvar" em lugar nenhum.
-
-### Sobre o clique de "Reconectar" (isso é normal!)
-
-Por segurança, os navegadores **esquecem a permissão de escrever no arquivo toda vez
-que você fecha e abre o navegador de novo** (isso não é um bug do app, é assim que a
-File System Access API funciona em todo navegador). Quando isso acontecer, você verá
-uma barrinha discreta: **"🔒 Reconectar arquivo de dados"**. Basta clicar uma vez em
-"Reconectar" e pronto — o app volta a salvar automaticamente pelo resto da sessão do
-navegador, sem pedir de novo.
-
-Enquanto você não reconectar, ou se algo der errado, **seus dados nunca são
-perdidos**: o app sempre também guarda uma cópia no `localStorage` do navegador como
-rede de segurança.
+Não existe conexão manual de arquivo, login nem tela de configuração de
+sincronização — os dados ficam salvos automaticamente e sozinhos, tanto no
+armazenamento interno do navegador (localStorage, imediato) quanto num arquivo
+`data.json` num repositório GitHub privado (ver "Sincronização automática
+entre dispositivos" abaixo), que é o que permite abrir o app em outro
+computador/celular e já ver os mesmos dados. Como rede de segurança adicional,
+os botões de **Exportar/Importar Backup** (em Configurações) continuam
+disponíveis pra mover ou guardar uma cópia dos dados manualmente quando quiser.
 
 ---
 
@@ -123,11 +90,13 @@ foil ou standard — resolvida), a cobertura do catálogo é de **99,4%** (1.598
 de 1.608 cartas); as poucas exceções restantes são fichas/variantes cujo
 arquivo específico nunca foi escaneado nessa pasta.
 
-**Atualizando o índice em massa:** o botão **"Recarregar índices de imagens do
-app"** em Configurações traz de volta o índice mais recente que acompanha os
-arquivos do projeto (`personal-drive-image-index-data.js`), sem apagar nada
-que você já tinha. Pra trazer um índice de outra fonte, importe um backup
-atualizado (**Configurações → Importar Backup**) que já traga
+**Atualizando o índice em massa:** o índice mais recente que acompanha os
+arquivos do projeto (`personal-drive-image-index-data.js`) é aplicado sozinho,
+sem nenhum clique, sempre que uma versão nova dele é publicada (ver
+"Atualização automática e silenciosa" abaixo). Pra forçar a reaplicação
+manualmente (ex.: depois de uma coleção nova), use o botão **"Atualizar base
+cartas"** em Configurações. Pra trazer um índice de outra fonte, importe um
+backup atualizado (**Configurações → Importar Backup**) que já traga
 `personalDriveImageIndex` completo.
 
 **Regenerando o índice do zero (processo manual/assistido):** a pasta do
@@ -140,30 +109,6 @@ navegador (Claude, por exemplo). O resultado vira o objeto
 `window.SEED_PERSONAL_DRIVE_IMAGE_INDEX` (em
 `personal-drive-image-index-data.js`). Não precisa (e não deve) rodar em tempo
 real dentro do app do usuário final.
-
----
-
-## Como "usar pela OneDrive" (sem API, sem login)
-
-A versão anterior deste app tentava usar login da Microsoft e a API do OneDrive
-diretamente, o que causava erros de autenticação. **Este app não faz mais isso.**
-
-A forma recomendada de ter seus dados disponíveis em mais de um computador é simples:
-
-1. Coloque a pasta inteira `sorcery-app` (com `index.html` e `data.json` — as imagens
-   das cartas vêm da pasta oficial no Google Drive, não precisam estar nessa pasta)
-   dentro de uma pasta que já é sincronizada pelo OneDrive no seu computador (ex.
-   `C:\Users\voce\OneDrive\sorcery-app`).
-2. O OneDrive vai sincronizar automaticamente o `data.json` em segundo plano, como
-   faz com qualquer outro arquivo — sem nenhuma configuração extra no app.
-3. Em outro computador com a mesma conta do OneDrive, a pasta `sorcery-app` (já
-   sincronizada) vai aparecer com o mesmo `data.json` atualizado. Basta abrir o
-   `index.html` lá e clicar em **"Conectar arquivo de dados" → "Já tenho um"**,
-   selecionando o `data.json` sincronizado.
-
-Não é sincronização em tempo real entre abas abertas simultaneamente em dois lugares
-(evite editar ao mesmo tempo nos dois computadores para não gerar conflito de
-arquivo do próprio OneDrive) — mas para uso "num lugar de cada vez" funciona muito bem.
 
 ---
 
@@ -193,12 +138,11 @@ continuam funcionando à parte, sem relação com o backup completo acima.
 
 ### Sincronização automática entre dispositivos (nota de manutenção)
 
-Além do "Conectar arquivo de dados" e do Exportar/Importar Backup manuais
-(ambos por dispositivo/navegador), o app mantém uma cópia viva do estado
-(catálogo, coleção, decks, listas, configurações) num arquivo
-`appdata/data.json` neste mesmo repositório GitHub. Isso roda **sozinho, sem
-nenhuma tela ou botão no app** — não há nada em Configurações sobre isso.
-Funciona assim:
+Além do Exportar/Importar Backup manual (por dispositivo/navegador, útil como
+cópia de segurança), o app mantém uma cópia viva do estado (catálogo,
+coleção, decks, listas, configurações) num arquivo `appdata/data.json` neste
+mesmo repositório GitHub. Isso roda **sozinho, sem nenhuma tela ou botão no
+app** — não há nada em Configurações sobre isso. Funciona assim:
 
 - A cada mudança (adicionar carta, editar deck, etc.), o app espera ~2,5s de
   inatividade e envia o estado atual pro GitHub (debounce, mesmo padrão do
@@ -424,28 +368,41 @@ depois via API pública de terceiros — isso é só o ponto de partida copiado 
 seus dados na primeira vez que o app roda; depois disso, **o catálogo salvo nos
 seus dados é que vale**.
 
-**Atualização pela API oficial:** em **Configurações → "Atualizar Catálogo (API
-oficial)"**, o app aplica ao catálogo um snapshot embutido da resposta de
-[`api.sorcerytcg.com/api/cards`](https://api.sorcerytcg.com/api/cards) — a API
-pública oficial do jogo, mantida pela equipe do Curiosa.io — e atualiza tipo,
-raridade, custo, elementos, threshold, texto de regra, flavor text, artista e a
-referência de imagem (`slug`) de cada carta. Cartas e coleção/decks/listas já
+**Atualização automática e silenciosa:** a cada carregamento de página, o app
+compara a versão do snapshot embutido no deploy atual
+(`window.SORCERY_API_SNAPSHOT_VERSION`, em `sorcery-api-cards-data.js`, e
+`window.PERSONAL_DRIVE_IMAGE_INDEX_VERSION`, em
+`personal-drive-image-index-data.js`) com a última versão já aplicada nesse
+dispositivo (`settings.catalogSnapshotVersion` /
+`settings.personalImageIndexVersion`) e, se houver uma versão mais nova,
+aplica sozinho — sem nenhum clique — tanto o catálogo quanto o índice de
+imagens (ver `applyBundledUpdatesIfNewer()` em `app.js`). Isso cobre o caso
+normal: eu atualizo esses dois arquivos e faço um novo deploy, e na próxima
+vez que o app abrir em qualquer dispositivo, ele já aplica sozinho.
+
+**Botão "Atualizar base cartas" (Configurações):** cobre o caso raro de uma
+coleção/edição nova ter acabado de ser lançada, antes mesmo de eu atualizar o
+snapshot embutido. Ao clicar, o app: (1) busca **ao vivo** na API pública
+oficial ([`api.sorcerytcg.com/api/cards`](https://api.sorcerytcg.com/api/cards),
+mantida pela equipe do Curiosa.io) via uma Netlify Function
+(`netlify/functions/catalog-fetch.js`, que roda no servidor pra não sofrer
+CORS — o servidor da API não envia `Access-Control-Allow-Origin`, então um
+`fetch()` direto do navegador é sempre bloqueado) e atualiza tipo, raridade,
+custo, elementos, threshold, texto de regra, artista e demais dados de cada
+carta; (2) reaplica o índice de imagens embutido
+(`personal-drive-image-index-data.js`). Cartas e coleção/decks/listas já
 existentes **não são perdidos**: o app casa cada impressão da API com a carta
 correspondente do seu catálogo atual pelo nome+edição e só atualiza os dados
-dela; cartas de sets ainda não catalogados (lançamentos novos) são adicionadas.
+dela; cartas de sets ainda não catalogados são adicionadas. Diferente da
+checagem automática (que só compara versões do snapshot local), este botão
+sempre busca ao vivo e por isso precisa de internet no momento do clique.
 
-**Por que um snapshot embutido em vez de buscar a API ao vivo:** o servidor da
-API não envia cabeçalho `Access-Control-Allow-Origin`, então o navegador
-bloqueia (CORS) qualquer `fetch()` direto a partir de uma página aberta via
-`file://` (o jeito normal de abrir este app) — isso não tem contorno possível
-sem um servidor no meio. Por isso a resposta da API fica congelada em
-`sorcery-api-cards-data.js`, carregada via `<script>` (que não sofre CORS,
-igual `catalog-data.js` e `drive-image-index-data.js`) em vez de buscada em
-tempo real — o botão funciona 100% offline. A consequência é que cartas/edições
-lançadas *depois* da data do snapshot (indicada no topo de
-`sorcery-api-cards-data.js`) só aparecem quando esse arquivo for atualizado —
-é só pedir pra eu buscar os dados mais recentes da API de novo e substituir o
-arquivo.
+Se uma coleção nova adicionar pastas novas de imagens no Drive pessoal, é
+preciso que eu rode a raspagem assistida daquela pasta (processo manual/
+assistido — ver "Regenerando o índice do zero" acima) e publique um novo
+`personal-drive-image-index-data.js` antes que as imagens dessa coleção
+apareçam; o botão "Atualizar base cartas" cuida da parte de dados/catálogo
+sozinho, mas não substitui esse passo de raspagem do Drive.
 
 Pra atualizar/corrigir o catálogo de outra forma (ex: colar um catálogo já
 editado à mão), o catálogo continua sendo só mais um campo dentro do backup único
@@ -475,11 +432,12 @@ sorcery-app/
 ├── catalog-data.js      - catálogo semente usado só na primeira vez que o app roda (window.SEED_CATALOG)
 ├── drive-image-index-data.js - índice-semente de imagens da pasta OFICIAL do Google Drive (window.SEED_DRIVE_IMAGE_INDEX, parcial - ver "Onde vêm as imagens")
 ├── personal-drive-image-index-data.js - índice-semente de imagens da pasta PESSOAL do usuário no Google Drive (window.SEED_PERSONAL_DRIVE_IMAGE_INDEX - ver "Onde vêm as imagens")
-├── sorcery-api-cards-data.js - snapshot estático da resposta da API oficial (window.SORCERY_API_CARDS_SNAPSHOT, ver nota de CORS acima)
-├── storage.js           - persistência: File System Access API + IndexedDB + localStorage
+├── sorcery-api-cards-data.js - snapshot estático da resposta da API oficial (window.SORCERY_API_CARDS_SNAPSHOT + SORCERY_API_SNAPSHOT_VERSION, ver nota de CORS acima)
+├── storage.js           - persistência: localStorage + Exportar/Importar Backup
 ├── dataSync.js           - sincronização automática e silenciosa do data.json via Netlify Functions (ver nota de manutenção acima)
 ├── netlify/functions/data-get.js  - lê o data.json do GitHub (server-side, token só aqui)
 ├── netlify/functions/data-save.js - grava o data.json no GitHub (server-side, token só aqui)
+├── netlify/functions/catalog-fetch.js - proxy server-side (sem token) pra API oficial de cartas, usado pelo botão "Atualizar base cartas"
 ├── state.js              - estado do app + operações de CRUD
 ├── imageResolver.js      - resolve a imagem de cada carta (Drive pessoal, exato > fuzzy > placeholder)
 ├── sorceryApi.js         - aplica ao catálogo o snapshot local da API pública oficial (sorcery-api-cards-data.js)
@@ -509,12 +467,10 @@ abrir o `index.html`.
 
 ## Limitações conhecidas
 
-- **As imagens não dependem mais de "Atualizar Catálogo".** Como a única fonte
-  agora é a pasta pessoal (resolvida direto por `card.set` + `card.name`, não
-  pelo `imagePath` numerado da API), as imagens aparecem mesmo com o
-  catálogo-semente original — rodar "Atualizar Catálogo (API oficial)"
-  continua recomendado pra completar tipo/raridade/custo/regras de cada carta,
-  só não é mais pré-requisito pra imagem aparecer.
+- **As imagens não dependem de "Atualizar base cartas".** Como a única fonte
+  é a pasta pessoal (resolvida direto por `card.set` + `card.name`, não pelo
+  `imagePath` numerado da API), as imagens aparecem mesmo com o
+  catálogo-semente original.
 - **Índice pessoal (`personal-drive-image-index-data.js`) tem 3.082 imagens**,
   cobrindo as 6 edições completas do jogo (alp, art, bet, dra, got, pro) — ver
   "Onde vêm as imagens das cartas" pra cobertura por carta (99,4%) e como
@@ -527,9 +483,6 @@ abrir o `index.html`.
   carta como alternativa (a aba "Fonte da Imagem" foi removida).
 - O scanner por OCR funciona melhor com boa iluminação e a carta bem enquadrada;
   em caso de dúvida, use sempre a busca manual que aparece como alternativa.
-- Fora do Chrome/Edge desktop, a gravação automática em arquivo não está disponível
-  — use Exportar/Importar Backup para mover dados entre navegadores/computadores.
-- O botão "Atualizar Catálogo" usa um snapshot embutido da API (`sorcery-api-cards-data.js`),
-  não uma busca ao vivo (ver seção "Catálogo de cartas" acima) — funciona offline,
-  mas cartas/edições lançadas depois da data desse snapshot só aparecem quando o
-  arquivo for atualizado.
+- O botão "Atualizar base cartas" precisa de internet no momento do clique
+  (busca ao vivo na API oficial via Netlify Function) — a checagem automática
+  de rotina no boot, por comparar só a versão do snapshot local, não precisa.

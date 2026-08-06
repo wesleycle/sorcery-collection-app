@@ -3113,4 +3113,9 @@
     "pro-witch-op-rf.png": "1b1L78ntd6RjRe2mSAB4YQ1sQxwU_76qG",
     "pro-witherwing_hero-ai-f.png": "19AmSVGh6gg1d5L6zYQDxKGnqLaOzfmJk"
   };
+
+  // Versao deste snapshot - mude sempre que regenerar o indice (nova
+  // coleta/merge de pastas do Drive), pra o app aplicar automaticamente no
+  // proximo carregamento de pagina (ver applyBundledUpdatesIfNewer em app.js).
+  window.PERSONAL_DRIVE_IMAGE_INDEX_VERSION = "2026-08-04";
 })();

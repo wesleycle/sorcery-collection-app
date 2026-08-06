@@ -11,38 +11,20 @@
 
   function render(container) {
     var settings = State.getSettings();
-    var connected = Storage.isConnected();
 
     var html = '<div class="page-header"><h2>' + Icon("settings", { cls: "icon-sm" }) + ' Configurações</h2></div>';
 
-    // ---- Persistencia / arquivo de dados ----
-    html += '<div class="settings-section"><h3>Arquivo de Dados (data.json)</h3>';
-    html += '<p class="status-line">Status: ' + (connected ? '<span class="status-ok">' + Icon("check-circle", { cls: "icon-sm" }) + ' Conectado</span> — gravações vão direto para o arquivo local, com espelho em localStorage.' : '<span class="status-bad">Não conectado</span> — os dados estão sendo salvos apenas no localStorage do navegador.') + "</p>";
-    if (!Storage.hasFSApi()) {
-      html += '<p class="status-line status-bad">Este navegador não suporta a File System Access API. Use Google Chrome ou Microsoft Edge no computador para conectar um arquivo data.json. Enquanto isso, seus dados continuam seguros no localStorage.</p>';
-    } else {
-      html += '<div class="toolbar">' +
-        '<button class="btn btn-primary" id="settings-connect-new">' + Icon("save", { cls: "icon-sm" }) + ' Criar novo data.json</button>' +
-        '<button class="btn" id="settings-connect-open">' + Icon("import", { cls: "icon-sm" }) + ' Abrir data.json existente</button>' +
-        (connected ? '<button class="btn btn-danger" id="settings-forget">Desconectar arquivo</button>' : "") +
-        "</div>";
-    }
-    html += "</div>";
-
-    // ---- Imagens ----
+    // ---- Base de cartas (catalogo + imagens) ----
+    // Catalogo e indice de imagens sao mantidos automaticamente e em silencio
+    // a cada carregamento de pagina (snapshot embutido no app - ver app.js).
+    // Este botao forca uma busca AO VIVO na API oficial (pra pegar cartas
+    // novas antes do proximo deploy) e reaplica o indice de imagens embutido.
     var personalIndexCount = State.getPersonalDriveImageIndexCount();
-    html += '<div class="settings-section"><h3>Imagens das Cartas</h3>';
-    html += '<p class="status-line">100% das imagens vêm da pasta pessoal do usuário no Google Drive — não existe mais link manual por carta. <strong>' + personalIndexCount + '</strong> ' + (personalIndexCount === 1 ? "imagem está indexada" : "imagens estão indexadas") + '.</p>';
-    html += '<p style="font-size:12px;color:var(--text-secondary);">Cartas sem match exato pelo nome usam automaticamente a imagem da carta com o nome mais parecido dentro do mesmo set (fuzzy match) — se nenhum nome for parecido o suficiente, a carta cai no placeholder em vez de arriscar mostrar uma imagem errada. Rodar "Atualizar Catálogo" não é mais pré-requisito pra imagem aparecer. Para trazer o índice mais recente que acompanha o app, use o botão abaixo; para atualizar em massa a partir de outra fonte, importe um backup atualizado (mais abaixo).</p>';
-    html += '<div class="toolbar"><button class="btn" id="settings-reload-image-index">' + Icon("refresh", { cls: "icon-sm" }) + ' Recarregar índice de imagens do app</button></div>';
-    html += "</div>";
-
-    // ---- Catalogo ----
     var lastCatalogUpdate = settings.lastCatalogUpdate;
-    html += '<div class="settings-section"><h3>Catálogo de Cartas</h3>';
-    html += '<p class="status-line">Cartas no catálogo: <strong>' + State.getCatalog().length + '</strong>' + (lastCatalogUpdate ? " — última atualização em " + formatDateTime(lastCatalogUpdate) : "") + '.</p>';
-    html += '<p style="font-size:12px;color:var(--text-secondary);">O botão abaixo aplica ao catálogo o snapshot mais recente da API pública oficial de Sorcery: Contested Realm (mantida pela equipe do Curiosa.io), embutido no app, e atualiza tipo, raridade, custo, elementos, threshold, texto de regra, artista e demais dados de cada carta — sem precisar colar catálogo nenhum manualmente. Cartas e coleção/decks/listas já existentes não são perdidos; só os dados são atualizados/completados. Funciona 100% offline, sem precisar de internet no momento do clique.</p>';
-    html += '<div class="toolbar"><button class="btn btn-primary" id="settings-update-catalog">' + Icon("refresh", { cls: "icon-sm" }) + ' Atualizar Catálogo (API oficial)</button></div>';
+    html += '<div class="settings-section"><h3>Base de Cartas</h3>';
+    html += '<p class="status-line">Cartas no catálogo: <strong>' + State.getCatalog().length + '</strong>' + (lastCatalogUpdate ? " — última atualização em " + formatDateTime(lastCatalogUpdate) : "") + '. <strong>' + personalIndexCount + '</strong> ' + (personalIndexCount === 1 ? "imagem indexada" : "imagens indexadas") + '.</p>';
+    html += '<p style="font-size:12px;color:var(--text-secondary);">O catálogo e o índice de imagens já se mantêm atualizados sozinhos a cada vez que o app é aberto. Use o botão abaixo só quando uma coleção/edição nova for lançada: ele busca ao vivo na API pública oficial de Sorcery: Contested Realm (mantida pela equipe do Curiosa.io) as cartas mais recentes e reaplica o índice de imagens da pasta do Drive. Cartas e coleção/decks/listas já existentes não são perdidos; só os dados são atualizados/completados.</p>';
+    html += '<div class="toolbar"><button class="btn btn-primary" id="settings-update-cards-db">' + Icon("refresh", { cls: "icon-sm" }) + ' Atualizar base cartas</button></div>';
     html += "</div>";
 
     // ---- Backup (unico jeito de importar/atualizar dados em massa) ----
@@ -69,29 +51,6 @@
   }
 
   function wire(container) {
-    var connectNewBtn = container.querySelector("#settings-connect-new");
-    if (connectNewBtn) connectNewBtn.onclick = function () {
-      Storage.connectNew().then(function () {
-        Storage.saveImmediate(State.data);
-        Toast.show("Arquivo data.json criado e conectado!");
-        render(container);
-      }).catch(function (e) { if (e && e.name !== "AbortError") Toast.show("Erro: " + e.message); });
-    };
-    var connectOpenBtn = container.querySelector("#settings-connect-open");
-    if (connectOpenBtn) connectOpenBtn.onclick = function () {
-      Storage.connectOpen().then(function () {
-        return Storage.load();
-      }).then(function (loaded) {
-        if (loaded) { State.replaceFullState(loaded); Toast.show("data.json carregado e conectado!"); }
-        else { Storage.saveImmediate(State.data); Toast.show("Arquivo vazio — dados atuais gravados nele."); }
-        render(container);
-      }).catch(function (e) { if (e && e.name !== "AbortError") Toast.show("Erro: " + e.message); });
-    };
-    var forgetBtn = container.querySelector("#settings-forget");
-    if (forgetBtn) forgetBtn.onclick = function () {
-      Storage.forgetFile().then(function () { Toast.show("Arquivo desconectado. Dados continuam salvos no localStorage."); render(container); });
-    };
-
     container.querySelector("#backup-export").onclick = function () {
       var name = Storage.exportBackup(State.data);
       Toast.show("Backup exportado: " + name);
@@ -117,29 +76,26 @@
     container.querySelector("#pref-currency").onchange = function (e) { State.updateSettings({ defaultCurrency: e.target.value }); };
     container.querySelector("#pref-view").onchange = function (e) { State.updateSettings({ collectionViewMode: e.target.value }); };
 
-    var updateCatalogBtn = container.querySelector("#settings-update-catalog");
-    if (updateCatalogBtn) updateCatalogBtn.onclick = function () {
+    var updateCardsDbBtn = container.querySelector("#settings-update-cards-db");
+    if (updateCardsDbBtn) updateCardsDbBtn.onclick = function () {
       if (!window.SorceryApi) { Toast.show("Módulo de importação da API não carregado."); return; }
-      updateCatalogBtn.disabled = true;
-      var originalLabel = updateCatalogBtn.innerHTML;
-      updateCatalogBtn.innerHTML = Icon("refresh", { cls: "icon-sm" }) + " Aplicando snapshot da API...";
-      SorceryApi.updateCatalog().then(function (stats) {
-        Toast.show("Catálogo atualizado: " + stats.added + " carta(s) nova(s), " + stats.updated + " atualizada(s) (" + stats.totalPrintings + " impressões na API).");
+      updateCardsDbBtn.disabled = true;
+      var originalLabel = updateCardsDbBtn.innerHTML;
+      updateCardsDbBtn.innerHTML = Icon("refresh", { cls: "icon-sm" }) + " Atualizando base cartas...";
+
+      var beforePersonal = State.getPersonalDriveImageIndexCount();
+
+      SorceryApi.updateCatalogLive().then(function (stats) {
+        var countPersonal = State.updatePersonalDriveImageIndex(window.SEED_PERSONAL_DRIVE_IMAGE_INDEX || {}, "merge");
+        var addedPersonal = countPersonal - beforePersonal;
+        State.updateSettings({ lastCatalogUpdate: new Date().toISOString() });
+        Toast.show("Base atualizada: " + stats.added + " carta(s) nova(s), " + stats.updated + " atualizada(s) (" + stats.totalPrintings + " impressões na API); +" + addedPersonal + " imagem(ns) nova(s) (" + countPersonal + " no total).");
         render(container);
       }).catch(function (err) {
-        Toast.show("Erro ao atualizar catálogo: " + err.message);
-        updateCatalogBtn.disabled = false;
-        updateCatalogBtn.innerHTML = originalLabel;
+        Toast.show("Erro ao atualizar base cartas: " + err.message);
+        updateCardsDbBtn.disabled = false;
+        updateCardsDbBtn.innerHTML = originalLabel;
       });
-    };
-
-    var reloadImageIndexBtn = container.querySelector("#settings-reload-image-index");
-    if (reloadImageIndexBtn) reloadImageIndexBtn.onclick = function () {
-      var beforePersonal = State.getPersonalDriveImageIndexCount();
-      var countPersonal = State.updatePersonalDriveImageIndex(window.SEED_PERSONAL_DRIVE_IMAGE_INDEX || {}, "merge");
-      var addedPersonal = countPersonal - beforePersonal;
-      Toast.show("Índice de imagens recarregado: +" + addedPersonal + " nova(s) (" + countPersonal + " no total).");
-      render(container);
     };
   }
 
