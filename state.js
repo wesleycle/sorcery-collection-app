@@ -76,40 +76,58 @@
   function subscribe(fn) { listeners.push(fn); return function () { listeners = listeners.filter(function (l) { return l !== fn; }); }; }
   function notify() { listeners.forEach(function (fn) { try { fn(data); } catch (e) { console.error(e); } }); }
 
+  // O que de fato viaja pro GitHub a cada sincronizacao: só os dados que o
+  // usuario gera (colecao, decks, listas, preferencias). Catalogo e os dois
+  // indices de imagem (driveImageIndex/personalDriveImageIndex) ficam de
+  // fora de proposito - eles já vêm embutidos no proprio app (catalog-data.js
+  // etc.) em todo dispositivo, então reenviá-los a cada mudança só inflava o
+  // arquivo pra ~1,8MB, o que estourava o limite de 1MB da leitura "inline"
+  // da API do GitHub e fazia a sincronização falhar silenciosamente.
+  function buildSyncPayload() {
+    return {
+      schemaVersion: data.schemaVersion,
+      collection: data.collection,
+      decks: data.decks,
+      lists: data.lists,
+      settings: data.settings
+    };
+  }
+
   function persist() {
     notify();
     Storage.save(data);
-    if (window.DataSync) DataSync.pushDebounced(data);
+    if (window.DataSync) DataSync.pushDebounced(buildSyncPayload());
   }
   function persistImmediate() {
     notify();
     var result = Storage.saveImmediate(data);
-    if (window.DataSync) DataSync.pushDebounced(data);
+    if (window.DataSync) DataSync.pushDebounced(buildSyncPayload());
     return result;
   }
 
   // Aplica um estado vindo do GitHub (ver DataSync.pull(), chamado no boot em
   // app.js) - grava so localmente (cache/fallback offline) e NAO reenvia pro
   // GitHub, já que o dado acabou de vir de lá (evita um commit inutil a cada
-  // carregamento de pagina).
-  function applyRemoteState(newData) {
-    if (!newData) return;
-    data = newData;
-    if (!data.catalog || !data.catalog.length) data.catalog = (window.SEED_CATALOG || []).slice();
-    if (!data.lists) data.lists = [];
+  // carregamento de pagina). O remoto só traz collection/decks/lists/settings
+  // (ver buildSyncPayload) - catalogo e indices de imagem continuam vindo do
+  // proprio dispositivo (seed local), nunca do GitHub.
+  function applyRemoteState(remote) {
+    if (!remote) return;
+    data.collection = remote.collection || [];
+    data.decks = remote.decks || [];
+    data.lists = remote.lists || [];
+    if (remote.settings) data.settings = Object.assign(defaultSettings(), remote.settings);
+    if (remote.schemaVersion) data.schemaVersion = remote.schemaVersion;
+
     migrateLegacyLists();
-    if (!data.settings) data.settings = defaultSettings();
     if (data.settings.listsViewMode === undefined) data.settings.listsViewMode = "grid";
-    if (!data.decks) data.decks = [];
     data.decks.forEach(function (d) {
       if (!d.collection) d.collection = [];
       if (d.isFavorite === undefined) d.isFavorite = false;
     });
     data.lists.forEach(function (l) { if (l.isFavorite === undefined) l.isFavorite = false; });
-    if (!data.driveImageIndex) data.driveImageIndex = Object.assign({}, window.SEED_DRIVE_IMAGE_INDEX || {});
-    if (!data.personalDriveImageIndex) data.personalDriveImageIndex = Object.assign({}, window.SEED_PERSONAL_DRIVE_IMAGE_INDEX || {});
     if (data.settings.driveImageIndexLastUpdate === undefined) data.settings.driveImageIndexLastUpdate = null;
-    if (!data.schemaVersion) data.schemaVersion = SCHEMA_VERSION;
+
     notify();
     Storage.saveImmediate(data);
   }

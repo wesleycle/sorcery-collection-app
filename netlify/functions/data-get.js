@@ -29,10 +29,15 @@ exports.handler = async function () {
     "/contents/" + encodeURIComponent(GITHUB_PATH) + "?ref=" + GITHUB_BRANCH + "&_=" + Date.now();
 
   try {
+    // Accept "raw" faz o GitHub devolver os bytes do arquivo direto no corpo
+    // da resposta, sem embrulhar em JSON+base64. Isso importa porque a API
+    // "normal" (application/vnd.github+json) só devolve o campo "content"
+    // preenchido pra arquivos menores que 1MB - acima disso vem vazio, e o
+    // app ficava sempre achando que não havia dados nenhum no repositorio.
     var res = await fetch(url, {
       headers: {
         Authorization: "Bearer " + token,
-        Accept: "application/vnd.github+json",
+        Accept: "application/vnd.github.raw+json",
         "X-GitHub-Api-Version": "2022-11-28"
       }
     });
@@ -48,10 +53,9 @@ exports.handler = async function () {
       return { statusCode: 502, body: JSON.stringify({ error: "GitHub respondeu " + res.status + ": " + errText.slice(0, 300) }) };
     }
 
-    var json = await res.json();
-    var content = Buffer.from(json.content || "", "base64").toString("utf-8");
+    var text = await res.text();
     var data = null;
-    try { data = JSON.parse(content); } catch (e) { /* conteudo remoto invalido, trata como ausente */ }
+    try { data = JSON.parse(text); } catch (e) { /* conteudo remoto invalido, trata como ausente */ }
 
     return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: data }) };
   } catch (err) {
