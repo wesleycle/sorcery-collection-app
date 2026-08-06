@@ -72,6 +72,17 @@
     data.lists.forEach(function (l) {
       if (l.type !== undefined) delete l.type;
       if (l.description === undefined) l.description = "";
+      // Classificacao dos itens (condicao/foil/promo/curio/preco/moeda),
+      // igual a Colecao - adicionada depois que listas ja existiam, entao
+      // itens salvos antes disso ganham os valores padrao (NM, sem
+      // foil/promo/curio, sem preco) na primeira vez que os dados carregam.
+      (l.items || []).forEach(function (i) {
+        if (i.condition === undefined) i.condition = "NM";
+        if (i.isFoil === undefined) i.isFoil = false;
+        if (i.isPromo === undefined) i.isPromo = false;
+        if (i.isCurio === undefined) i.isCurio = false;
+        if (i.addedAt === undefined) i.addedAt = l.createdAt || nowIso();
+      });
     });
   }
 
@@ -404,6 +415,12 @@
 
   function getFavoriteLists() { return data.lists.filter(function (l) { return l.isFavorite; }); }
 
+  // fields aceita os mesmos campos de classificacao de uma entrada da
+  // Colecao (condition/pricePaid/currency/isFoil/isPromo/isCurio/notes) -
+  // usados pelo formulario de "Adicionar a Lista" (ver render-lists.js). Se
+  // a carta ja estava na lista, so soma a quantidade e atualiza notas (a
+  // classificacao ja definida so muda por edicao explicita, pra nao
+  // sobrescrever sem querer).
   function addListItem(listId, item) {
     var list = data.lists.find(function (l) { return l.id === listId; });
     if (!list) return null;
@@ -412,7 +429,18 @@
       existing.quantity += item.quantity || 1;
       if (item.notes) existing.notes = item.notes;
     } else {
-      list.items.push({ cardId: item.cardId, quantity: item.quantity || 1, notes: item.notes || "" });
+      list.items.push({
+        cardId: item.cardId,
+        quantity: item.quantity || 1,
+        condition: item.condition || "NM",
+        pricePaid: item.pricePaid != null ? item.pricePaid : undefined,
+        currency: item.currency || data.settings.defaultCurrency || "BRL",
+        isFoil: !!item.isFoil,
+        isPromo: !!item.isPromo,
+        isCurio: !!item.isCurio,
+        notes: item.notes || "",
+        addedAt: nowIso()
+      });
     }
     list.updatedAt = nowIso();
     persist();

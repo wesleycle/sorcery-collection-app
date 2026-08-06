@@ -247,17 +247,20 @@
     // generico (ver renderCardGrid em render-common.js).
     var notesHtml = item.notes ? '<p style="font-size:11px;color:var(--text-secondary);font-style:italic;margin:0;">"' + UI.escapeHtml(item.notes) + '"</p>' : "";
     return '<div class="card-tile" data-open-card="' + card.id + '" data-open-ctx=\'' + ctx + '\'>' +
-      '<div class="thumb-wrap"><img data-card-id="' + card.id + '"></div>' +
-      UI.cardTileBodyHtml(card, null, notesHtml + itemActionsHtml(item, listId)) +
+      '<div class="thumb-wrap">' +
+      '<img data-card-id="' + card.id + '" data-foil="' + !!item.isFoil + '">' +
+      (item.isFoil ? '<span class="badge badge-foil badge-left">' + Icon("sparkle", { cls: "icon-sm" }) + ' Foil</span>' : '') +
+      '</div>' +
+      UI.cardTileBodyHtml(card, card.set + " · " + (item.condition || "NM"), notesHtml + itemActionsHtml(item, listId)) +
       "</div>";
   }
 
   function listRowHtml(item, card, listId) {
     var ctx = UI.escapeHtml(JSON.stringify({ source: "list", listId: listId }));
     return '<div class="card-row" data-open-card="' + card.id + '" data-open-ctx=\'' + ctx + '\'>' +
-      '<div class="row-thumb-wrap"><img class="row-thumb" data-card-id="' + card.id + '"></div>' +
-      '<div class="row-main"><div class="row-name">' + UI.escapeHtml(card.name) + "</div>" +
-      '<div class="row-meta">' + card.set + " · " + card.type + (item.notes ? ' · "' + UI.escapeHtml(item.notes) + '"' : "") + "</div></div>" +
+      '<div class="row-thumb-wrap"><img class="row-thumb" data-card-id="' + card.id + '" data-foil="' + !!item.isFoil + '"></div>' +
+      '<div class="row-main"><div class="row-name">' + UI.escapeHtml(card.name) + (item.isFoil ? ' ' + Icon("sparkle", { cls: "icon-sm" }) : '') + "</div>" +
+      '<div class="row-meta">' + card.set + " · " + card.type + (item.condition ? " · " + item.condition : "") + (item.notes ? ' · "' + UI.escapeHtml(item.notes) + '"' : "") + "</div></div>" +
       itemActionsHtml(item, listId) +
       "</div>";
   }
@@ -280,21 +283,14 @@
       return c ? { item: i, card: c } : null;
     }).filter(Boolean).filter(function (e) { return UI.applyCommonFilters(e.card, f); });
 
-    if (filters.foilOnly || filters.curioOnly) {
-      entries = entries.filter(function (e) {
-        var colEntries = State.getCollectionEntriesForCard(e.card.id);
-        return colEntries.some(function (ce) { return (!filters.foilOnly || ce.isFoil) && (!filters.curioOnly || ce.isCurio); });
-      });
-    }
-    // Condicao: mesmo criterio da Colecao - considera as entradas da colecao
-    // desta carta (um item de lista nao tem condicao propria; a condicao e
-    // sempre da copia fisica que o usuario possui). Itens de cartas que o
-    // usuario ainda nao tem na colecao nao passam nesse filtro.
+    // Foil/Curio/Condicao: cada item de lista agora tem sua propria
+    // classificacao (ver openListItemForm), igual a uma entrada da Colecao -
+    // filtra direto pelos campos do item, sem depender de o usuario ja ter
+    // essa carta na colecao.
+    if (filters.foilOnly) entries = entries.filter(function (e) { return !!e.item.isFoil; });
+    if (filters.curioOnly) entries = entries.filter(function (e) { return !!e.item.isCurio; });
     if (filters.conditions && filters.conditions.length) {
-      entries = entries.filter(function (e) {
-        var colEntries = State.getCollectionEntriesForCard(e.card.id);
-        return colEntries.some(function (ce) { return filters.conditions.indexOf(ce.condition) !== -1; });
-      });
+      entries = entries.filter(function (e) { return filters.conditions.indexOf(e.item.condition) !== -1; });
     }
 
     if (!entries.length) {
@@ -306,14 +302,14 @@
       return;
     }
 
-    // "Data de adicao"/"Preco pago" (collectionSort) usam as mesmas entradas
-    // da colecao dessa carta, igual a Colecao - se a carta ainda nao estiver
-    // na colecao do usuario, entra com addedAt nulo/preco 0 (vai pro fim/
-    // conta como 0, sem quebrar a ordenacao).
+    // "Data de adicao"/"Preco pago" (collectionSort) usam os campos do
+    // proprio item da lista agora - mesmo padrao da Colecao, so que a fonte
+    // e a classificacao feita direto na lista (ver openListItemForm).
+    var itemByCardId = {};
+    entries.forEach(function (e) { itemByCardId[e.card.id] = e.item; });
     var sortedCards = UI.sortCards(entries.map(function (e) { return e.card; }), filters.sortBy, function (c) {
-      var colEntries = State.getCollectionEntriesForCard(c.id);
-      var earliest = colEntries.reduce(function (min, ce) { return (!min || new Date(ce.addedAt) < new Date(min)) ? ce.addedAt : min; }, null);
-      return { addedAt: earliest, pricePaid: colEntries.reduce(function (s, ce) { return s + (ce.pricePaid || 0); }, 0) };
+      var it = itemByCardId[c.id];
+      return { addedAt: it ? it.addedAt : null, pricePaid: it ? (it.pricePaid || 0) : 0 };
     });
     var byId = {};
     entries.forEach(function (e) { byId[e.card.id] = e; });
@@ -351,7 +347,9 @@
     slot.querySelectorAll("[data-edit-item]").forEach(function (b) {
       b.onclick = function (e) {
         e.stopPropagation();
-        openEditListItem(list, b.getAttribute("data-edit-item"), container);
+        var cardId = b.getAttribute("data-edit-item");
+        var item = list.items.find(function (i) { return i.cardId === cardId; });
+        openListItemForm(list, cardId, item, container);
       };
     });
   }
@@ -370,24 +368,71 @@
       UI.hydrateImages(resSlot);
       root.querySelectorAll("[data-pick]").forEach(function (el) {
         el.onclick = function () {
-          State.addListItem(list.id, { cardId: el.getAttribute("data-pick"), quantity: 1 });
+          var cardId = el.getAttribute("data-pick");
           Modal.close();
-          renderItems(container, list);
-          renderIndicators(container, list);
+          openListItemForm(list, cardId, null, container);
         };
       });
     };
   }
 
-  function openEditListItem(list, cardId, container) {
-    var item = list.items.find(function (i) { return i.cardId === cardId; });
-    var html = '<h3>Editar Item</h3>' +
-      '<div class="form-row"><label>Quantidade</label><input type="number" min="1" id="edit-item-qty" value="' + item.quantity + '"></div>' +
-      '<div class="form-row"><label>Notas</label><textarea id="edit-item-notes">' + UI.escapeHtml(item.notes || "") + "</textarea></div>" +
-      '<button class="btn btn-primary btn-block" id="edit-item-save">Salvar</button>';
+  // ---------------- Formulario de classificacao do item (mesmos campos do
+  // "Adicionar a Colecao") ----------------
+  // item === null -> adicionando uma carta nova a lista; item preenchido ->
+  // editando um item ja existente. Grava condicao/preco/moeda/foil/promo/
+  // curio/notas direto no item da lista (ver State.addListItem/
+  // updateListItem), igual a uma copia na Colecao.
+  function openListItemForm(list, cardId, item, container) {
+    var card = State.getCatalogCard(cardId);
+    var settings = State.getSettings();
+    var isNew = !item;
+
+    var html = '<h3>' + (isNew ? "Adicionar à Lista" : "Editar Item") + " — " + UI.escapeHtml(card.name) + "</h3>";
+    html += '<div class="form-row"><label>Quantidade</label><span class="qty-stepper">' +
+      '<button type="button" id="li-form-qty-minus">−</button><span class="qty-val" id="li-form-qty-val">' + (item ? item.quantity : 1) + '</span><button type="button" id="li-form-qty-plus">+</button></span></div>';
+    html += '<div class="form-inline">';
+    html += '<div class="form-row"><label>Condição</label><select id="li-form-condition">' + UI.CONDITION_LIST.map(function (c) {
+      return '<option value="' + c + '" ' + ((item ? item.condition : "NM") === c ? "selected" : "") + '>' + c + "</option>";
+    }).join("") + "</select></div>";
+    html += '<div class="form-row"><label>Preço pago</label><input type="number" step="0.01" id="li-form-price" value="' + (item && item.pricePaid != null ? item.pricePaid : "") + '"></div>';
+    html += '<div class="form-row"><label>Moeda</label><select id="li-form-currency">' + ["BRL", "USD", "EUR"].map(function (c) {
+      return '<option ' + ((item ? item.currency : settings.defaultCurrency) === c ? "selected" : "") + '>' + c + "</option>";
+    }).join("") + "</select></div>";
+    html += "</div>";
+    html += '<div class="form-row"><label>Flags</label><div class="toggle-row">' +
+      '<span class="toggle-chip ' + (item && item.isFoil ? "active" : "") + '" id="li-form-foil">' + Icon("sparkle", { cls: "icon-sm" }) + ' Foil</span>' +
+      '<span class="toggle-chip ' + (item && item.isPromo ? "active" : "") + '" id="li-form-promo">' + Icon("ribbon", { cls: "icon-sm" }) + ' Promo</span>' +
+      '<span class="toggle-chip ' + (item && item.isCurio ? "active" : "") + '" id="li-form-curio">' + Icon("gem", { cls: "icon-sm" }) + ' Curio</span>' +
+      "</div></div>";
+    html += '<div class="form-row"><label>Notas</label><textarea id="li-form-notes">' + UI.escapeHtml(item ? item.notes || "" : "") + "</textarea></div>";
+    html += '<button class="btn btn-primary btn-block" id="li-form-save">' + Icon("save", { cls: "icon-sm" }) + " Salvar</button>";
+
     var root = Modal.open(html);
-    root.querySelector("#edit-item-save").onclick = function () {
-      State.updateListItem(list.id, cardId, { quantity: parseInt(root.querySelector("#edit-item-qty").value, 10) || 1, notes: root.querySelector("#edit-item-notes").value });
+    var qty = item ? item.quantity : 1;
+    root.querySelector("#li-form-qty-plus").onclick = function () { qty++; root.querySelector("#li-form-qty-val").textContent = qty; };
+    root.querySelector("#li-form-qty-minus").onclick = function () { qty = Math.max(1, qty - 1); root.querySelector("#li-form-qty-val").textContent = qty; };
+    ["li-form-foil", "li-form-promo", "li-form-curio"].forEach(function (id) {
+      root.querySelector("#" + id).onclick = function () { root.querySelector("#" + id).classList.toggle("active"); };
+    });
+    root.querySelector("#li-form-save").onclick = function () {
+      var fields = {
+        cardId: cardId,
+        quantity: qty,
+        condition: root.querySelector("#li-form-condition").value,
+        pricePaid: root.querySelector("#li-form-price").value ? parseFloat(root.querySelector("#li-form-price").value) : undefined,
+        currency: root.querySelector("#li-form-currency").value,
+        isFoil: root.querySelector("#li-form-foil").classList.contains("active"),
+        isPromo: root.querySelector("#li-form-promo").classList.contains("active"),
+        isCurio: root.querySelector("#li-form-curio").classList.contains("active"),
+        notes: root.querySelector("#li-form-notes").value
+      };
+      if (isNew) {
+        State.addListItem(list.id, fields);
+        Toast.show('Adicionado à lista "' + list.name + '".');
+      } else {
+        State.updateListItem(list.id, cardId, fields);
+        Toast.show("Item atualizado.");
+      }
       Modal.close();
       renderItems(container, list);
       renderIndicators(container, list);
