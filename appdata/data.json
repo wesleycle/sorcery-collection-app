@@ -7771,12 +7771,28 @@
         {
           "cardId": "art-witch",
           "quantity": 1,
-          "notes": ""
+          "notes": "",
+          "condition": "NM",
+          "isFoil": false,
+          "isPromo": false,
+          "isCurio": false,
+          "addedAt": "2026-08-06T05:19:41.371Z"
+        },
+        {
+          "cardId": "bet-poison_nova",
+          "quantity": 1,
+          "condition": "NM",
+          "currency": "BRL",
+          "isFoil": false,
+          "isPromo": false,
+          "isCurio": false,
+          "notes": "",
+          "addedAt": "2026-08-06T19:28:28.171Z"
         }
       ],
       "isFavorite": false,
       "createdAt": "2026-08-06T05:19:41.371Z",
-      "updatedAt": "2026-08-06T19:10:52.224Z"
+      "updatedAt": "2026-08-06T19:28:28.171Z"
     }
   ],
   "settings": {
