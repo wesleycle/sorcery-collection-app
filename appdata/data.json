@@ -59185,7 +59185,17 @@
       "updatedAt": "2026-08-03T14:13:19.803Z"
     }
   ],
-  "lists": [],
+  "lists": [
+    {
+      "id": "2d56d03e-a2e1-4b3a-af1a-70065be09a66",
+      "name": "teste",
+      "description": "teste",
+      "items": [],
+      "isFavorite": false,
+      "createdAt": "2026-08-06T04:52:34.203Z",
+      "updatedAt": "2026-08-06T04:52:34.203Z"
+    }
+  ],
   "settings": {
     "catalogUpdateUrl": "",
     "defaultCurrency": "BRL",
