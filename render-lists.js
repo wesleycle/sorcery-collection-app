@@ -22,8 +22,7 @@
   // ---------------- Tela: todas as listas ----------------
   function renderListOfLists(container) {
     var lists = State.getLists();
-    var html = '<div class="page-header"><h2>Listas</h2>' +
-      '<div class="toolbar"><button class="btn btn-primary" id="lists-new-btn">' + Icon("plus", { cls: "icon-sm" }) + ' Nova Lista</button></div></div>';
+    var html = '<div class="page-header"><h2>Listas</h2></div>';
 
     if (!lists.length) {
       html += '<div class="empty-state"><div class="big-icon">' + Icon("star") + '</div>' +
@@ -44,6 +43,9 @@
           "</div></div>";
       });
     }
+
+    html += '<div class="fab-wrap"><button class="fab-main" id="lists-new-btn" title="Nova Lista">' + Icon("plus") + '</button></div>';
+
     container.innerHTML = html;
 
     container.querySelector("#lists-new-btn").onclick = function () {

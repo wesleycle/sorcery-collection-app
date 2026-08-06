@@ -26,10 +26,9 @@
   function renderDeckList(container) {
     var decks = State.getDecks();
     var catalog = State.getCatalog();
-    var html = '<div class="page-header"><h2>Meus Decks</h2><div class="toolbar">' +
-      '<button class="btn btn-primary" id="deck-new">+ Novo Deck</button>' +
-      (decks.length ? '<button class="btn" id="decks-stats">' + Icon("stats", { cls: "icon-sm" }) + ' Indicadores</button>' : "") +
-      "</div></div>";
+    var html = '<div class="page-header"><h2>Meus Decks</h2>' +
+      (decks.length ? '<div class="toolbar"><button class="btn" id="decks-stats">' + Icon("stats", { cls: "icon-sm" }) + ' Indicadores</button></div>' : "") +
+      "</div>";
 
     if (!decks.length) {
       html += '<div class="empty-state"><div class="big-icon">' + Icon("decks") + '</div>Nenhum deck cadastrado ainda.</div>';
@@ -52,6 +51,8 @@
           "</div>";
       });
     }
+
+    html += '<div class="fab-wrap"><button class="fab-main" id="deck-new" title="Novo Deck">' + Icon("plus") + '</button></div>';
 
     container.innerHTML = html;
     UI.hydrateImages(container);
