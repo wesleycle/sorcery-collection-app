@@ -7505,7 +7505,7 @@
     "collectionViewMode": "grid",
     "catalogViewMode": "grid",
     "deckViewMode": "build",
-    "listsViewMode": "grid",
+    "listsViewMode": "list",
     "lastCatalogUpdate": "2026-08-06T17:53:57.853Z",
     "driveImageIndexLastUpdate": "2026-08-04T02:22:50.015Z",
     "catalogSnapshotVersion": "2026-08-03",
