@@ -7736,6 +7736,10 @@
         {
           "cardId": "bet-sleep",
           "quantity": 1
+        },
+        {
+          "cardId": "bet-drown",
+          "quantity": 1
         }
       ],
       "format": "Constructed",
@@ -7743,7 +7747,7 @@
       "sourceMode": "all",
       "isFavorite": false,
       "createdAt": "2026-08-06T19:15:32.739Z",
-      "updatedAt": "2026-08-06T19:16:32.343Z"
+      "updatedAt": "2026-08-06T19:16:40.802Z"
     }
   ],
   "lists": [
