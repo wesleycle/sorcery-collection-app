@@ -191,48 +191,44 @@ Cada módulo (Decks, Listas) ainda tem seus próprios botões de exportação/im
 específicos (ex: exportar um deck como texto, importar uma lista de trocas) — esses
 continuam funcionando à parte, sem relação com o backup completo acima.
 
-### Sincronizar com GitHub (opcional)
+### Sincronização automática entre dispositivos (nota de manutenção)
 
-Além do Exportar/Importar Backup manual, dá pra manter uma cópia viva do
-`data.json` num repositório do GitHub — funciona em **qualquer navegador**
-(diferente do "Conectar arquivo de dados", que só funciona no Chrome/Edge
-desktop) e não depende de instalar nada. Fica em **Configurações →
-Sincronizar com GitHub**.
+Além do "Conectar arquivo de dados" e do Exportar/Importar Backup manuais
+(ambos por dispositivo/navegador), o app mantém uma cópia viva do estado
+(catálogo, coleção, decks, listas, configurações) num arquivo
+`appdata/data.json` neste mesmo repositório GitHub. Isso roda **sozinho, sem
+nenhuma tela ou botão no app** — não há nada em Configurações sobre isso.
+Funciona assim:
 
-**Por que GitHub e não o próprio Google Drive das imagens?** A API do Google
-Drive bloqueia leitura/gravação via `fetch()`/XHR de um navegador comum
-(CORS) — é por isso que as imagens são carregadas via `<img src>` (que
-ignora CORS), truque que só serve pra *exibir* bytes de imagem, nunca pra ler
-ou gravar um JSON arbitrário, e muito menos pra escrever (gravar sempre exige
-login OAuth no Drive, não importa como a pasta esteja compartilhada). A API
-REST do GitHub, em compensação, aceita chamadas autenticadas direto do
-navegador (CORS liberado) usando só um token — sem precisar de login OAuth
-nem projeto no Google Cloud.
+- A cada mudança (adicionar carta, editar deck, etc.), o app espera ~2,5s de
+  inatividade e envia o estado atual pro GitHub (debounce, mesmo padrão do
+  arquivo local) — ver `dataSync.js`.
+- A cada carregamento de página, o app busca a versão mais recente salva no
+  GitHub e aplica por cima dos dados locais — ver a chamada a
+  `DataSync.pull()` em `app.js`. Se a busca falhar (offline, primeira
+  execução, etc.) o app simplesmente segue com os dados locais.
 
-**Como configurar:**
+O navegador **nunca fala direto com a API do GitHub** nem guarda nenhum
+token. Toda a conversa passa por duas Netlify Functions que rodam no
+servidor (`netlify/functions/data-get.js` e `data-save.js`), que usam um
+Personal Access Token guardado como variável de ambiente do Netlify
+(`GH_DATA_TOKEN`) — nunca em nenhum arquivo versionado, nunca enviado ao
+navegador. Owner/repo/branch/caminho do arquivo (`wesleycle` /
+`sorcery-collection-app` / `main` / `appdata/data.json`) estão hardcoded no
+topo dos dois arquivos de função, já que não são segredo.
 
-1. Crie um [Personal Access Token de acesso restrito
-   (fine-grained)](https://github.com/settings/tokens?type=beta) no GitHub,
-   limitado a **um único repositório** (pode ser privado) com permissão
-   **"Contents: Read and write"** — nunca use um token com acesso à conta
-   inteira.
-2. Em Configurações, preencha usuário/organização, nome do repositório,
-   branch (padrão `main`) e o caminho do arquivo (padrão `data.json`), e cole
-   o token no campo correspondente.
-3. Clique **Testar conexão** pra confirmar que tudo está certo.
-4. Use **Salvar agora no GitHub** pra gravar o estado atual, ou **Carregar do
-   GitHub** pra puxar o que estiver no repositório (pede confirmação, pois
-   sobrescreve tudo — mesmo cuidado que Importar Backup).
-5. Marque **"Enviar automaticamente..."** pra gravar sozinho a cada mudança
-   (poucos segundos depois de parar de mexer, mesmo padrão de debounce usado
-   pelo arquivo local).
+**Para reconfigurar (ex.: apontar pra outro repositório, ou girar o token):**
 
-**Segurança do token:** o Personal Access Token **nunca fica em
-`State.data`** — não é salvo no `data.json` gravado nem entra no Exportar
-Backup. Ele fica só numa chave separada do `localStorage` deste navegador
-(`sorcery-github-pat`, ver `githubSync.js`). Trocar de navegador ou
-computador exige colar o token de novo — isso é intencional. Isso também
-significa que restaurar um backup em outro dispositivo não ativa a sincronização com GitHub sozinho: é preciso configurar owner/repo/token de novo lá.
+1. Gere um [Personal Access Token de acesso restrito
+   (fine-grained)](https://github.com/settings/tokens?type=beta), limitado
+   ao repositório `sorcery-collection-app`, com permissão **"Contents: Read
+   and write"**.
+2. No painel do Netlify: Project configuration → Environment variables →
+   adicione `GH_DATA_TOKEN` com o valor do token.
+3. Se mudar owner/repo/branch/caminho, edite as constantes no topo de
+   `netlify/functions/data-get.js` e `data-save.js` e faça o commit/push — o
+   Netlify está conectado a este repositório e redeploya sozinho a cada push
+   na branch `main`.
 
 ---
 
@@ -481,7 +477,9 @@ sorcery-app/
 ├── personal-drive-image-index-data.js - índice-semente de imagens da pasta PESSOAL do usuário no Google Drive (window.SEED_PERSONAL_DRIVE_IMAGE_INDEX - ver "Onde vêm as imagens")
 ├── sorcery-api-cards-data.js - snapshot estático da resposta da API oficial (window.SORCERY_API_CARDS_SNAPSHOT, ver nota de CORS acima)
 ├── storage.js           - persistência: File System Access API + IndexedDB + localStorage
-├── githubSync.js         - sincronização opcional do data.json com um repositório GitHub (Contents API + PAT)
+├── dataSync.js           - sincronização automática e silenciosa do data.json via Netlify Functions (ver nota de manutenção acima)
+├── netlify/functions/data-get.js  - lê o data.json do GitHub (server-side, token só aqui)
+├── netlify/functions/data-save.js - grava o data.json no GitHub (server-side, token só aqui)
 ├── state.js              - estado do app + operações de CRUD
 ├── imageResolver.js      - resolve a imagem de cada carta (Drive pessoal, exato > fuzzy > placeholder)
 ├── sorceryApi.js         - aplica ao catálogo o snapshot local da API pública oficial (sorcery-api-cards-data.js)

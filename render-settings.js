@@ -29,31 +29,6 @@
     }
     html += "</div>";
 
-    // ---- Sincronizar com GitHub (opcional) ----
-    var gh = (window.GithubSync ? GithubSync.getConfig() : (settings.github || {}));
-    var ghHasToken = !!(window.GithubSync && GithubSync.hasToken());
-    var ghConfigured = !!(window.GithubSync && GithubSync.isConfigured());
-    html += '<div class="settings-section"><h3>Sincronizar com GitHub (opcional)</h3>';
-    html += '<p class="status-line">Guarda uma cópia do data.json (catálogo, coleção, decks, listas e configurações) num repositório do GitHub — funciona em qualquer navegador, sem instalar nada. Status: ' +
-      (ghConfigured ? '<span class="status-ok">' + Icon("check-circle", { cls: "icon-sm" }) + ' Configurado</span>' : '<span class="status-bad">Não configurado</span>') +
-      (gh.lastPush ? " — último envio em " + formatDateTime(gh.lastPush) : "") +
-      (gh.lastPull ? ", última leitura em " + formatDateTime(gh.lastPull) : "") + '.</p>';
-    html += '<p style="font-size:12px;color:var(--text-secondary);">Crie um <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener">Personal Access Token de acesso restrito (fine-grained)</a> só para o repositório abaixo, com permissão "Contents: Read and write", e cole no campo Token. O token fica <strong>só neste navegador</strong> (localStorage) — nunca é salvo no data.json nem entra no Exportar Backup.</p>';
-    html += '<div class="form-inline">';
-    html += '<div class="form-row"><label>Usuário/Organização</label><input type="text" id="gh-owner" value="' + (gh.owner || "").replace(/"/g, "&quot;") + '" placeholder="ex.: wesleyfeitosa"></div>';
-    html += '<div class="form-row"><label>Repositório</label><input type="text" id="gh-repo" value="' + (gh.repo || "").replace(/"/g, "&quot;") + '" placeholder="ex.: sorcery-data"></div>';
-    html += '<div class="form-row"><label>Branch</label><input type="text" id="gh-branch" value="' + (gh.branch || "main").replace(/"/g, "&quot;") + '" placeholder="main"></div>';
-    html += '<div class="form-row"><label>Caminho do arquivo</label><input type="text" id="gh-path" value="' + (gh.path || "data.json").replace(/"/g, "&quot;") + '" placeholder="data.json"></div>';
-    html += '<div class="form-row"><label>Personal Access Token</label><input type="password" id="gh-token" value="' + (ghHasToken ? "••••••••••••••••" : "") + '" placeholder="cole o token aqui" autocomplete="off"></div>';
-    html += '</div>';
-    html += '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);margin-top:8px;"><input type="checkbox" id="gh-autosync" ' + (gh.autoSync ? "checked" : "") + '> Enviar automaticamente pro GitHub a cada mudança (poucos segundos após parar de mexer)</label>';
-    html += '<div class="toolbar" style="margin-top:10px;">' +
-      '<button class="btn" id="gh-test">' + Icon("check-circle", { cls: "icon-sm" }) + ' Testar conexão</button>' +
-      '<button class="btn btn-primary" id="gh-push">' + Icon("export", { cls: "icon-sm" }) + ' Salvar agora no GitHub</button>' +
-      '<button class="btn" id="gh-pull">' + Icon("import", { cls: "icon-sm" }) + ' Carregar do GitHub</button>' +
-      "</div>";
-    html += "</div>";
-
     // ---- Imagens ----
     var personalIndexCount = State.getPersonalDriveImageIndexCount();
     html += '<div class="settings-section"><h3>Imagens das Cartas</h3>';
@@ -157,87 +132,6 @@
         updateCatalogBtn.innerHTML = originalLabel;
       });
     };
-
-    // ---- GitHub Sync ----
-    var GH_TOKEN_MASK = "••••••••••••••••";
-    var ghOwnerInput = container.querySelector("#gh-owner");
-    var ghRepoInput = container.querySelector("#gh-repo");
-    var ghBranchInput = container.querySelector("#gh-branch");
-    var ghPathInput = container.querySelector("#gh-path");
-    var ghTokenInput = container.querySelector("#gh-token");
-    var ghAutoSyncInput = container.querySelector("#gh-autosync");
-    var ghTestBtn = container.querySelector("#gh-test");
-    var ghPushBtn = container.querySelector("#gh-push");
-    var ghPullBtn = container.querySelector("#gh-pull");
-
-    if (ghOwnerInput && window.GithubSync) {
-      // Aplica no State os campos atuais (mesmo que o usuario nao tenha "saido" do campo ainda)
-      // antes de qualquer acao que dependa da config - evita usar valores desatualizados.
-      var syncGithubFieldsToConfig = function () {
-        GithubSync.setConfig({
-          owner: ghOwnerInput.value.trim(),
-          repo: ghRepoInput.value.trim(),
-          branch: (ghBranchInput.value.trim() || "main"),
-          path: (ghPathInput.value.trim() || "data.json"),
-          autoSync: !!ghAutoSyncInput.checked
-        });
-        var tokenVal = ghTokenInput.value;
-        if (tokenVal !== GH_TOKEN_MASK) GithubSync.setToken(tokenVal.trim());
-      };
-
-      ghOwnerInput.onchange = syncGithubFieldsToConfig;
-      ghRepoInput.onchange = syncGithubFieldsToConfig;
-      ghBranchInput.onchange = syncGithubFieldsToConfig;
-      ghPathInput.onchange = syncGithubFieldsToConfig;
-      ghTokenInput.onchange = syncGithubFieldsToConfig;
-      ghAutoSyncInput.onchange = syncGithubFieldsToConfig;
-
-      ghTestBtn.onclick = function () {
-        syncGithubFieldsToConfig();
-        ghTestBtn.disabled = true;
-        var original = ghTestBtn.innerHTML;
-        ghTestBtn.innerHTML = Icon("refresh", { cls: "icon-sm" }) + " Testando...";
-        GithubSync.testConnection().then(function (info) {
-          Toast.show("Conectado a " + info.fullName + " (branch padrão: " + info.defaultBranch + (info.private ? ", privado" : ", público") + ").");
-        }).catch(function (err) {
-          Toast.show("Erro: " + err.message);
-        }).then(function () {
-          ghTestBtn.disabled = false;
-          ghTestBtn.innerHTML = original;
-        });
-      };
-
-      ghPushBtn.onclick = function () {
-        syncGithubFieldsToConfig();
-        ghPushBtn.disabled = true;
-        var original = ghPushBtn.innerHTML;
-        ghPushBtn.innerHTML = Icon("refresh", { cls: "icon-sm" }) + " Enviando...";
-        GithubSync.pushNow(State.data).then(function (result) {
-          if (result.ok) Toast.show("data.json enviado pro GitHub com sucesso.");
-          else Toast.show("Erro ao enviar: " + (result.error || "configuração incompleta."));
-          ghPushBtn.disabled = false;
-          ghPushBtn.innerHTML = original;
-          render(container);
-        });
-      };
-
-      ghPullBtn.onclick = function () {
-        syncGithubFieldsToConfig();
-        if (!confirm("Carregar do GitHub vai SOBRESCREVER todos os dados atuais (catálogo, coleção, decks, listas, índice de imagens e configurações) com o que estiver no repositório. Continuar?")) return;
-        ghPullBtn.disabled = true;
-        var original = ghPullBtn.innerHTML;
-        ghPullBtn.innerHTML = Icon("refresh", { cls: "icon-sm" }) + " Carregando...";
-        GithubSync.pull().then(function (loaded) {
-          State.replaceFullState(loaded);
-          Toast.show("Dados carregados do GitHub com sucesso.");
-          render(container);
-        }).catch(function (err) {
-          Toast.show("Erro ao carregar: " + err.message);
-          ghPullBtn.disabled = false;
-          ghPullBtn.innerHTML = original;
-        });
-      };
-    }
 
     var reloadImageIndexBtn = container.querySelector("#settings-reload-image-index");
     if (reloadImageIndexBtn) reloadImageIndexBtn.onclick = function () {

@@ -79,6 +79,19 @@
     Storage.restoreHandle().then(function (perm) {
       return State.init().then(function () { return perm; });
     }).then(function (perm) {
+      // Sincronizacao automatica e silenciosa: a cada carregamento de
+      // pagina, busca a versao mais recente salva no GitHub (ver
+      // dataSync.js) e aplica por cima dos dados locais - assim o app fica
+      // igual em qualquer navegador/dispositivo sem nenhuma tela ou acao do
+      // usuario. Se falhar (offline, primeira execucao, etc.) segue
+      // normalmente com os dados locais.
+      if (window.DataSync) {
+        DataSync.pull().then(function (remote) {
+          if (remote) State.applyRemoteState(remote);
+        });
+      }
+      return perm;
+    }).then(function (perm) {
       if (perm === "granted") {
         renderBannerNone();
       } else if (perm === "prompt" || perm === "denied") {

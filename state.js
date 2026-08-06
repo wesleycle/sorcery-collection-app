@@ -1,7 +1,8 @@
 /* state.js
  * Estado central do app (catalogo, colecao, decks, listas, configuracoes) +
  * operacoes de CRUD. Toda mutacao chama State.persist() que grava via Storage
- * (arquivo data.json + localStorage), debounced.
+ * (arquivo data.json + localStorage) e via DataSync (GitHub, automatico e
+ * silencioso - ver dataSync.js), ambos debounced.
  */
 (function () {
   "use strict";
@@ -26,12 +27,7 @@
       lastCatalogUpdate: null,
       // Ultima vez que o indice de imagens do Google Drive oficial (slug ->
       // ID do arquivo) foi atualizado - ver driveImageIndex abaixo.
-      driveImageIndexLastUpdate: null,
-      // Config (nao-secreta) da sincronizacao opcional com GitHub - ver
-      // githubSync.js. O token de acesso NUNCA fica aqui (fica só em
-      // localStorage, fora do State/backup) - só owner/repo/branch/path e
-      // metadados de quando foi a ultima sincronizacao.
-      github: { owner: "", repo: "", branch: "main", path: "data.json", autoSync: false, lastPush: null, lastPull: null }
+      driveImageIndexLastUpdate: null
     };
   }
 
@@ -83,13 +79,39 @@
   function persist() {
     notify();
     Storage.save(data);
-    if (window.GithubSync) GithubSync.pushDebounced(data);
+    if (window.DataSync) DataSync.pushDebounced(data);
   }
   function persistImmediate() {
     notify();
     var result = Storage.saveImmediate(data);
-    if (window.GithubSync) GithubSync.pushDebounced(data);
+    if (window.DataSync) DataSync.pushDebounced(data);
     return result;
+  }
+
+  // Aplica um estado vindo do GitHub (ver DataSync.pull(), chamado no boot em
+  // app.js) - grava so localmente (cache/fallback offline) e NAO reenvia pro
+  // GitHub, já que o dado acabou de vir de lá (evita um commit inutil a cada
+  // carregamento de pagina).
+  function applyRemoteState(newData) {
+    if (!newData) return;
+    data = newData;
+    if (!data.catalog || !data.catalog.length) data.catalog = (window.SEED_CATALOG || []).slice();
+    if (!data.lists) data.lists = [];
+    migrateLegacyLists();
+    if (!data.settings) data.settings = defaultSettings();
+    if (data.settings.listsViewMode === undefined) data.settings.listsViewMode = "grid";
+    if (!data.decks) data.decks = [];
+    data.decks.forEach(function (d) {
+      if (!d.collection) d.collection = [];
+      if (d.isFavorite === undefined) d.isFavorite = false;
+    });
+    data.lists.forEach(function (l) { if (l.isFavorite === undefined) l.isFavorite = false; });
+    if (!data.driveImageIndex) data.driveImageIndex = Object.assign({}, window.SEED_DRIVE_IMAGE_INDEX || {});
+    if (!data.personalDriveImageIndex) data.personalDriveImageIndex = Object.assign({}, window.SEED_PERSONAL_DRIVE_IMAGE_INDEX || {});
+    if (data.settings.driveImageIndexLastUpdate === undefined) data.settings.driveImageIndexLastUpdate = null;
+    if (!data.schemaVersion) data.schemaVersion = SCHEMA_VERSION;
+    notify();
+    Storage.saveImmediate(data);
   }
 
   // ---------------- Init ----------------
@@ -102,7 +124,6 @@
         migrateLegacyLists();
         if (!data.settings) data.settings = defaultSettings();
         if (data.settings.listsViewMode === undefined) data.settings.listsViewMode = "grid";
-        if (!data.settings.github) data.settings.github = defaultSettings().github;
         if (!data.decks) data.decks = [];
         data.decks.forEach(function (d) {
           if (!d.collection) d.collection = [];
@@ -555,6 +576,7 @@
 
     resetUserData: resetUserData,
     replaceFullState: replaceFullState,
+    applyRemoteState: applyRemoteState,
     emptyState: emptyState
   };
 })();
