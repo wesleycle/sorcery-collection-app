@@ -7744,6 +7744,10 @@
         {
           "cardId": "bet-grapple_shot",
           "quantity": 1
+        },
+        {
+          "cardId": "got-makeshift_barricade",
+          "quantity": 1
         }
       ],
       "format": "Constructed",
@@ -7751,7 +7755,7 @@
       "sourceMode": "all",
       "isFavorite": false,
       "createdAt": "2026-08-06T19:15:32.739Z",
-      "updatedAt": "2026-08-06T19:16:46.667Z"
+      "updatedAt": "2026-08-06T19:16:53.698Z"
     }
   ],
   "lists": [
