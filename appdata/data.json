@@ -7171,12 +7171,12 @@
       "quantity": 1,
       "condition": "NM",
       "currency": "BRL",
-      "isFoil": false,
+      "isFoil": true,
       "isPromo": false,
       "isCurio": false,
       "notes": "",
       "addedAt": "2026-08-03T14:12:22.014Z",
-      "updatedAt": "2026-08-06T19:08:47.545Z"
+      "updatedAt": "2026-08-06T19:08:52.185Z"
     }
   ],
   "decks": [
