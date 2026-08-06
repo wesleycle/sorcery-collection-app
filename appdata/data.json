@@ -7450,6 +7450,20 @@
       "isFavorite": false,
       "createdAt": "2026-08-06T05:20:21.980Z",
       "updatedAt": "2026-08-06T05:20:33.732Z"
+    },
+    {
+      "id": "8e1bcb4b-c375-4f20-a68a-20157bb70dab",
+      "name": "teste 5",
+      "avatar": null,
+      "atlas": [],
+      "spellbook": [],
+      "collection": [],
+      "format": "Constructed",
+      "notes": "",
+      "sourceMode": "all",
+      "isFavorite": false,
+      "createdAt": "2026-08-06T06:00:26.749Z",
+      "updatedAt": "2026-08-06T06:00:26.749Z"
     }
   ],
   "lists": [
@@ -7476,10 +7490,10 @@
     "catalogViewMode": "grid",
     "deckViewMode": "build",
     "listsViewMode": "grid",
-    "lastCatalogUpdate": "2026-08-06T06:00:05.007Z",
+    "lastCatalogUpdate": "2026-08-06T05:24:29.925Z",
     "driveImageIndexLastUpdate": "2026-08-04T02:22:50.015Z",
-    "imageLinksLastUpdate": null,
-    "personalImageIndexVersion": "2026-08-04",
-    "catalogSnapshotVersion": "2026-08-03"
+    "catalogSnapshotVersion": null,
+    "personalImageIndexVersion": null,
+    "imageLinksLastUpdate": null
   }
 }
