@@ -7716,6 +7716,10 @@
         {
           "cardId": "got-zap",
           "quantity": 1
+        },
+        {
+          "cardId": "alp-blink",
+          "quantity": 1
         }
       ],
       "format": "Constructed",
@@ -7723,7 +7727,7 @@
       "sourceMode": "all",
       "isFavorite": false,
       "createdAt": "2026-08-06T19:15:32.739Z",
-      "updatedAt": "2026-08-06T19:16:07.846Z"
+      "updatedAt": "2026-08-06T19:16:12.442Z"
     }
   ],
   "lists": [
