@@ -7490,13 +7490,13 @@
       "items": [
         {
           "cardId": "art-witch",
-          "quantity": 2,
+          "quantity": 1,
           "notes": ""
         }
       ],
       "isFavorite": false,
       "createdAt": "2026-08-06T05:19:41.371Z",
-      "updatedAt": "2026-08-06T19:10:47.196Z"
+      "updatedAt": "2026-08-06T19:10:52.224Z"
     }
   ],
   "settings": {
