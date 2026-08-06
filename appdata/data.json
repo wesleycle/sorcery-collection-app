@@ -7814,23 +7814,11 @@
           "notes": "",
           "addedAt": "2026-08-06T19:28:28.171Z",
           "id": "553e0a12-8ad0-4a29-b391-72dfb1abd625"
-        },
-        {
-          "cardId": "bet-poison_nova",
-          "quantity": 1,
-          "condition": "NM",
-          "currency": "BRL",
-          "isFoil": false,
-          "isPromo": false,
-          "isCurio": false,
-          "notes": "",
-          "addedAt": "2026-08-06T19:28:28.171Z",
-          "id": "3fb6d1a3-3a5c-487c-b20b-32c8e3771f99"
         }
       ],
       "isFavorite": false,
       "createdAt": "2026-08-06T05:19:41.371Z",
-      "updatedAt": "2026-08-06T19:54:53.638Z"
+      "updatedAt": "2026-08-06T19:54:57.665Z"
     }
   ],
   "settings": {
