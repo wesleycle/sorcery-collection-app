@@ -59189,7 +59189,7 @@
   "settings": {
     "catalogUpdateUrl": "",
     "defaultCurrency": "BRL",
-    "collectionViewMode": "list",
+    "collectionViewMode": "grid",
     "catalogViewMode": "grid",
     "deckViewMode": "images",
     "listsViewMode": "grid",
