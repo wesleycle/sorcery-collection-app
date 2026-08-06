@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1510"/>
+      <stop offset="100%" stop-color="#0d0a07"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="292" height="412" rx="14" fill="url(#bg)" stroke="#c9a84c" stroke-width="3"/>
+  <rect x="16" y="16" width="268" height="388" rx="8" fill="none" stroke="#3d3020" stroke-width="1.5"/>
+  <g transform="translate(150,175)" fill="none" stroke="#c9a84c" stroke-width="3" stroke-linejoin="round">
+    <path d="M0,-55 L15,-18 L55,-15 L23,10 L33,50 L0,28 L-33,50 L-23,10 L-55,-15 L-15,-18 Z"/>
+  </g>
+  <text x="150" y="270" font-family="Georgia, serif" font-size="20" fill="#9a8a70" text-anchor="middle">Imagem não encontrada</text>
+  <text x="150" y="298" font-family="Georgia, serif" font-size="14" fill="#5a4e3a" text-anchor="middle">Sorcery: Contested Realm</text>
+</svg>

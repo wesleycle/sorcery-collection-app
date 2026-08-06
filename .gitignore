@@ -1,0 +1,21 @@
+# Bases de imagens pessoais (grandes, nao fazem parte do codigo-fonte)
+images/alp/
+images/art/
+images/bet/
+images/dra/
+images/got/
+images/pro/
+images/local/
+
+# Dados pessoais / backups (nao fazem parte do codigo-fonte do app)
+db/
+
+# Arquivos de trabalho/scraping que nao sao usados pelo app em producao
+test-onedrive.html
+onedrive-image-links.csv
+onedrive-image-links.js.bak
+build-image-links.py
+
+# SO / editor
+.DS_Store
+Thumbs.db

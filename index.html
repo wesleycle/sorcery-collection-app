@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sorcery Collection — Gerenciador de Coleção</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="images/placeholder.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="connect-banner" class="hidden"></div>
+
+<div id="app">
+  <nav class="sidebar-nav">
+    <div class="brand"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5C5.5 4.3 8.7 4.3 11 5.5V19c-2.3-1.2-5.5-1.2-8 0V5.5Z"/><path d="M21 5.5C18.5 4.3 15.3 4.3 13 5.5V19c2.3-1.2 5.5-1.2 8 0V5.5Z"/><path d="M12 6V19"/><path d="M12 1.1l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7Z" fill="currentColor" stroke="none"/></svg> Sorcery Collection</div>
+    <a class="nav-item" data-page="home" href="#/home"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10.2V20a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9.8"/><path d="M10 21v-5a2 2 0 0 1 4 0v5"/><path d="M12 4V1.4"/><path d="M12 1.4 13.8 2.2 12 3Z" fill="currentColor" stroke="none"/></svg></span><span>Início</span></a>
+    <a class="nav-item" data-page="collection" href="#/collection"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.3" y="6.3" width="11" height="15" rx="1.6" transform="rotate(-10 8.8 13.8)"/><rect x="9.5" y="4" width="11" height="15" rx="1.6"/></svg></span><span>Coleção</span></a>
+    <a class="nav-item" data-page="catalog" href="#/catalog"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5C5.5 4.3 8.7 4.3 11 5.5V19c-2.3-1.2-5.5-1.2-8 0V5.5Z"/><path d="M21 5.5C18.5 4.3 15.3 4.3 13 5.5V19c2.3-1.2 5.5-1.2 8 0V5.5Z"/><path d="M12 6V19"/><path d="M15 9.3h4M15 12.3h4M15 15.3h3"/></svg></span><span>Catálogo</span></a>
+    <a class="nav-item" data-page="decks" href="#/decks"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 7.8 13.5 11l3.5.5-2.6 2.4.6 3.5L12 15.7l-3 1.7.6-3.5L7 11.5l3.5-.5Z"/></svg></span><span>Decks</span></a>
+    <a class="nav-item" data-page="lists" href="#/lists"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4l2.4 5.3 5.6.7-4.1 4 1 5.7-4.9-2.8-4.9 2.8 1-5.7-4.1-4 5.6-.7Z"/></svg></span><span>Listas</span></a>
+    <a class="nav-item" data-page="scanner" href="#/scanner"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8"/><path d="M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8"/><path d="M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16"/><path d="M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M6.3 12S8.8 8.6 12 8.6 17.7 12 17.7 12 15.2 15.4 12 15.4 6.3 12 6.3 12Z"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span><span>Scanner</span></a>
+    <a class="nav-item" data-page="settings" href="#/settings"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.1 5.9l-1.7 1.7M7.6 16.4l-1.7 1.7M18.1 18.1l-1.7-1.7M7.6 7.6 5.9 5.9"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></span><span>Configurações</span></a>
+  </nav>
+
+  <div class="app-body">
+    <header class="mobile-topbar">
+      <a class="mobile-topbar-brand nav-item" data-page="home" href="#/home"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5C5.5 4.3 8.7 4.3 11 5.5V19c-2.3-1.2-5.5-1.2-8 0V5.5Z"/><path d="M21 5.5C18.5 4.3 15.3 4.3 13 5.5V19c2.3-1.2 5.5-1.2 8 0V5.5Z"/><path d="M12 6V19"/><path d="M12 1.1l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7Z" fill="currentColor" stroke="none"/></svg><span>Sorcery Collection</span></a>
+      <a class="mobile-topbar-settings nav-item" data-page="settings" href="#/settings" aria-label="Configurações"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.1 5.9l-1.7 1.7M7.6 16.4l-1.7 1.7M18.1 18.1l-1.7-1.7M7.6 7.6 5.9 5.9"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></a>
+    </header>
+    <main class="app-main" id="main-container"></main>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" data-page="collection" href="#/collection"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.3" y="6.3" width="11" height="15" rx="1.6" transform="rotate(-10 8.8 13.8)"/><rect x="9.5" y="4" width="11" height="15" rx="1.6"/></svg></span><span>Coleção</span></a>
+    <a class="nav-item" data-page="catalog" href="#/catalog"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5C5.5 4.3 8.7 4.3 11 5.5V19c-2.3-1.2-5.5-1.2-8 0V5.5Z"/><path d="M21 5.5C18.5 4.3 15.3 4.3 13 5.5V19c2.3-1.2 5.5-1.2 8 0V5.5Z"/><path d="M12 6V19"/><path d="M15 9.3h4M15 12.3h4M15 15.3h3"/></svg></span><span>Catálogo</span></a>
+    <a class="nav-item" data-page="decks" href="#/decks"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 7.8 13.5 11l3.5.5-2.6 2.4.6 3.5L12 15.7l-3 1.7.6-3.5L7 11.5l3.5-.5Z"/></svg></span><span>Decks</span></a>
+    <a class="nav-item" data-page="lists" href="#/lists"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4l2.4 5.3 5.6.7-4.1 4 1 5.7-4.9-2.8-4.9 2.8 1-5.7-4.1-4 5.6-.7Z"/></svg></span><span>Listas</span></a>
+    <a class="nav-item" data-page="scanner" href="#/scanner"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8"/><path d="M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8"/><path d="M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16"/><path d="M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M6.3 12S8.8 8.6 12 8.6 17.7 12 17.7 12 15.2 15.4 12 15.4 6.3 12 6.3 12Z"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span><span>Scanner</span></a>
+  </nav>
+</div>
+
+<div id="modal-root" class="hidden"></div>
+<div id="toast-root" class="toast hidden"></div>
+
+<!-- Tesseract.js via CDN - script simples, sem instalacao/bundler. Necessario apenas
+     no momento em que a pagina do Scanner faz OCR (requer internet nesse instante). -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<!-- Scripts globais, em ordem de dependencia. Sem type="module", sem import/export,
+     sem bundler - funciona diretamente sob file:// em Chrome/Edge. -->
+<script src="catalog-data.js"></script>
+<script src="drive-image-index-data.js"></script>
+<script src="personal-drive-image-index-data.js"></script>
+<script src="sorcery-api-cards-data.js"></script>
+<script src="icons.js"></script>
+<script src="storage.js"></script>
+<script src="githubSync.js"></script>
+<script src="state.js"></script>
+<script src="imageResolver.js"></script>
+<script src="sorceryApi.js"></script>
+<script src="deckUtils.js"></script>
+<script src="importExport.js"></script>
+<script src="exportImage.js"></script>
+<script src="ocr.js"></script>
+<script src="render-common.js"></script>
+<script src="render-home.js"></script>
+<script src="render-collection.js"></script>
+<script src="render-catalog.js"></script>
+<script src="render-decks.js"></script>
+<script src="render-lists.js"></script>
+<script src="render-scanner.js"></script>
+<script src="render-settings.js"></script>
+<script src="router.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
