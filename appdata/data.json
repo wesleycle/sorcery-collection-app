@@ -7480,6 +7480,245 @@
       "isFavorite": false,
       "createdAt": "2026-08-06T06:00:26.749Z",
       "updatedAt": "2026-08-06T06:00:36.697Z"
+    },
+    {
+      "id": "264ed06a-dcdb-4676-a600-5119efcb620b",
+      "name": "Lifestealer Chodemage",
+      "avatar": {
+        "cardId": "alp-battlemage",
+        "quantity": 1
+      },
+      "atlas": [
+        {
+          "cardId": "alp-dark_tower",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-deep_sea",
+          "quantity": 3
+        },
+        {
+          "cardId": "alp-floodplain",
+          "quantity": 3
+        },
+        {
+          "cardId": "alp-gothic_tower",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-lighthouse",
+          "quantity": 3
+        },
+        {
+          "cardId": "alp-lone_tower",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-mirror_realm",
+          "quantity": 1
+        },
+        {
+          "cardId": "pro-mock_court",
+          "quantity": 2
+        },
+        {
+          "cardId": "got-mountain_peaks",
+          "quantity": 3
+        },
+        {
+          "cardId": "alp-observatory",
+          "quantity": 2
+        },
+        {
+          "cardId": "got-river_rapids",
+          "quantity": 2
+        },
+        {
+          "cardId": "alp-the_colour_out_of_space",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-thin_ice",
+          "quantity": 3
+        },
+        {
+          "cardId": "art-troll_bridge",
+          "quantity": 3
+        },
+        {
+          "cardId": "got-wuthering_heights",
+          "quantity": 2
+        }
+      ],
+      "spellbook": [
+        {
+          "cardId": "got-acid_rain",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-sphere_of_animosity",
+          "quantity": 1
+        },
+        {
+          "cardId": "art-the_black_plague",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-atlantean_fate",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-key_to_the_city",
+          "quantity": 1
+        },
+        {
+          "cardId": "art-ring_of_morrigan",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-the_rack",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-toolbox",
+          "quantity": 3
+        },
+        {
+          "cardId": "got-dank_omphalos",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-adept_illusionist",
+          "quantity": 2
+        },
+        {
+          "cardId": "alp-highland_falconer",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-highland_princess",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-polar_explorers",
+          "quantity": 2
+        },
+        {
+          "cardId": "art-sir_tom_thumb",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-vampire_bats",
+          "quantity": 2
+        },
+        {
+          "cardId": "art-coy_nixie",
+          "quantity": 2
+        },
+        {
+          "cardId": "art-lugbog_cat",
+          "quantity": 3
+        },
+        {
+          "cardId": "got-order_of_the_sacred_oak",
+          "quantity": 3
+        },
+        {
+          "cardId": "got-sturmgeist",
+          "quantity": 2
+        },
+        {
+          "cardId": "got-abaddon_succubus",
+          "quantity": 2
+        },
+        {
+          "cardId": "got-bane_of_aventis",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-evil_twin",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-failed_mutation",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-ruler_of_thul",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-sacred_stag",
+          "quantity": 2
+        },
+        {
+          "cardId": "alp-daperyll_vampire",
+          "quantity": 3
+        },
+        {
+          "cardId": "alp-hounds_of_ondaros",
+          "quantity": 1
+        },
+        {
+          "cardId": "got-renatus_trueblood",
+          "quantity": 2
+        },
+        {
+          "cardId": "art-the_green_knight",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-browse",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-plague_of_frogs",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-shrink",
+          "quantity": 2
+        },
+        {
+          "cardId": "alp-pollimorph",
+          "quantity": 2
+        },
+        {
+          "cardId": "alp-sleep",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-flanking_maneuver",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-grapple_shot",
+          "quantity": 2
+        },
+        {
+          "cardId": "got-scatter",
+          "quantity": 3
+        },
+        {
+          "cardId": "got-swap",
+          "quantity": 1
+        },
+        {
+          "cardId": "art-mesmerism",
+          "quantity": 1
+        },
+        {
+          "cardId": "alp-whirling_blades",
+          "quantity": 2
+        }
+      ],
+      "collection": [],
+      "format": "Constructed",
+      "notes": "",
+      "sourceMode": "all",
+      "isFavorite": false,
+      "createdAt": "2026-08-06T19:15:32.739Z",
+      "updatedAt": "2026-08-06T19:15:32.739Z"
     }
   ],
   "lists": [
