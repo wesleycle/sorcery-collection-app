@@ -7780,7 +7780,7 @@
         },
         {
           "cardId": "bet-poison_nova",
-          "quantity": 1,
+          "quantity": 4,
           "condition": "NM",
           "currency": "BRL",
           "isFoil": false,
@@ -7792,7 +7792,7 @@
       ],
       "isFavorite": false,
       "createdAt": "2026-08-06T05:19:41.371Z",
-      "updatedAt": "2026-08-06T19:28:28.171Z"
+      "updatedAt": "2026-08-06T19:33:55.095Z"
     }
   ],
   "settings": {
