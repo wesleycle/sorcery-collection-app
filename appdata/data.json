@@ -7784,7 +7784,7 @@
           "quantity": 1,
           "condition": "NM",
           "currency": "BRL",
-          "isFoil": false,
+          "isFoil": true,
           "isPromo": false,
           "isCurio": false,
           "notes": "",
@@ -7793,19 +7793,7 @@
         },
         {
           "cardId": "bet-poison_nova",
-          "quantity": 1,
-          "condition": "NM",
-          "currency": "BRL",
-          "isFoil": false,
-          "isPromo": false,
-          "isCurio": false,
-          "notes": "",
-          "addedAt": "2026-08-06T19:28:28.171Z",
-          "id": "fa1eaad1-89e6-41c7-8994-19f7faa5ee50"
-        },
-        {
-          "cardId": "bet-poison_nova",
-          "quantity": 1,
+          "quantity": 2,
           "condition": "NM",
           "currency": "BRL",
           "isFoil": false,
@@ -7818,7 +7806,7 @@
       ],
       "isFavorite": false,
       "createdAt": "2026-08-06T05:19:41.371Z",
-      "updatedAt": "2026-08-06T19:54:57.665Z"
+      "updatedAt": "2026-08-06T19:55:05.041Z"
     }
   ],
   "settings": {
