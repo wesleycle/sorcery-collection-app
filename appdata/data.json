@@ -7476,8 +7476,10 @@
     "catalogViewMode": "grid",
     "deckViewMode": "build",
     "listsViewMode": "grid",
-    "lastCatalogUpdate": "2026-08-06T05:24:29.925Z",
+    "lastCatalogUpdate": "2026-08-06T06:00:05.007Z",
     "driveImageIndexLastUpdate": "2026-08-04T02:22:50.015Z",
-    "imageLinksLastUpdate": null
+    "imageLinksLastUpdate": null,
+    "personalImageIndexVersion": "2026-08-04",
+    "catalogSnapshotVersion": "2026-08-03"
   }
 }
