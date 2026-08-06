@@ -7426,10 +7426,16 @@
       "id": "745c2a69-401b-4a01-8213-58aae60537ae",
       "name": "teste 2",
       "description": "teste",
-      "items": [],
+      "items": [
+        {
+          "cardId": "art-witch",
+          "quantity": 1,
+          "notes": ""
+        }
+      ],
       "isFavorite": false,
       "createdAt": "2026-08-06T05:19:41.371Z",
-      "updatedAt": "2026-08-06T05:19:41.371Z"
+      "updatedAt": "2026-08-06T05:19:49.162Z"
     }
   ],
   "settings": {
