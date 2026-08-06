@@ -77,6 +77,7 @@
       // itens salvos antes disso ganham os valores padrao (NM, sem
       // foil/promo/curio, sem preco) na primeira vez que os dados carregam.
       (l.items || []).forEach(function (i) {
+        if (i.id === undefined) i.id = uuid();
         if (i.condition === undefined) i.condition = "NM";
         if (i.isFoil === undefined) i.isFoil = false;
         if (i.isPromo === undefined) i.isPromo = false;
@@ -417,40 +418,42 @@
 
   // fields aceita os mesmos campos de classificacao de uma entrada da
   // Colecao (condition/pricePaid/currency/isFoil/isPromo/isCurio/notes) -
-  // usados pelo formulario de "Adicionar a Lista" (ver render-lists.js). Se
-  // a carta ja estava na lista, so soma a quantidade e atualiza notas (a
-  // classificacao ja definida so muda por edicao explicita, pra nao
-  // sobrescrever sem querer).
+  // usados pelo formulario de "Adicionar a Lista" (ver render-lists.js).
+  // Cada chamada SEMPRE cria uma entrada nova (com id proprio), mesmo que a
+  // carta ja esteja na lista - igual a Colecao (addCollectionEntry), pra
+  // permitir que a mesma carta tenha copias com caracteristicas diferentes
+  // (ex: uma normal NM e outra foil LP) na mesma lista. Pra juntar copias
+  // com caracteristicas identicas de volta numa so, ver
+  // mergeListItemsForCard; pra quebrar uma pilha em copias individuais, ver
+  // splitListItem.
   function addListItem(listId, item) {
     var list = data.lists.find(function (l) { return l.id === listId; });
     if (!list) return null;
-    var existing = list.items.find(function (i) { return i.cardId === item.cardId; });
-    if (existing) {
-      existing.quantity += item.quantity || 1;
-      if (item.notes) existing.notes = item.notes;
-    } else {
-      list.items.push({
-        cardId: item.cardId,
-        quantity: item.quantity || 1,
-        condition: item.condition || "NM",
-        pricePaid: item.pricePaid != null ? item.pricePaid : undefined,
-        currency: item.currency || data.settings.defaultCurrency || "BRL",
-        isFoil: !!item.isFoil,
-        isPromo: !!item.isPromo,
-        isCurio: !!item.isCurio,
-        notes: item.notes || "",
-        addedAt: nowIso()
-      });
-    }
+    var entry = {
+      id: uuid(),
+      cardId: item.cardId,
+      quantity: item.quantity || 1,
+      condition: item.condition || "NM",
+      pricePaid: item.pricePaid != null ? item.pricePaid : undefined,
+      currency: item.currency || data.settings.defaultCurrency || "BRL",
+      isFoil: !!item.isFoil,
+      isPromo: !!item.isPromo,
+      isCurio: !!item.isCurio,
+      notes: item.notes || "",
+      addedAt: nowIso()
+    };
+    list.items.push(entry);
     list.updatedAt = nowIso();
     persist();
-    return list;
+    return entry;
   }
 
-  function updateListItem(listId, cardId, patch) {
+  // itemId identifica a entrada especifica (nao mais a carta - uma lista
+  // pode ter varias entradas com o mesmo cardId, ver addListItem acima).
+  function updateListItem(listId, itemId, patch) {
     var list = data.lists.find(function (l) { return l.id === listId; });
     if (!list) return null;
-    var item = list.items.find(function (i) { return i.cardId === cardId; });
+    var item = list.items.find(function (i) { return i.id === itemId; });
     if (!item) return null;
     Object.assign(item, patch);
     list.updatedAt = nowIso();
@@ -458,17 +461,67 @@
     return item;
   }
 
-  function removeListItem(listId, cardId) {
+  function removeListItem(listId, itemId) {
     var list = data.lists.find(function (l) { return l.id === listId; });
     if (!list) return;
-    list.items = list.items.filter(function (i) { return i.cardId !== cardId; });
+    list.items = list.items.filter(function (i) { return i.id !== itemId; });
     list.updatedAt = nowIso();
     persist();
   }
 
-  // Remove uma carta de TODAS as listas que a contem - usado quando a carta
-  // e adicionada de fato a colecao (deixa de fazer sentido continuar numa
-  // lista tipo "quero conseguir essa carta").
+  // Quebra uma entrada de quantidade N em N entradas de quantidade 1 -
+  // mesmo padrao de splitCollectionEntry, permite dar caracteristicas
+  // proprias (condicao/foil/preco/notas) a cada copia individualmente depois.
+  function splitListItem(listId, itemId) {
+    var list = data.lists.find(function (l) { return l.id === listId; });
+    if (!list) return null;
+    var item = list.items.find(function (i) { return i.id === itemId; });
+    if (!item || item.quantity <= 1) return null;
+    var qty = item.quantity;
+    var clones = [];
+    for (var i = 0; i < qty; i++) {
+      clones.push(Object.assign({}, item, { id: i === 0 ? item.id : uuid(), quantity: 1 }));
+    }
+    list.items = list.items.filter(function (x) { return x.id !== itemId; }).concat(clones);
+    list.updatedAt = nowIso();
+    persist();
+    return clones;
+  }
+
+  // Reagrupa entradas dessa carta NESSA lista que tenham exatamente as
+  // mesmas caracteristicas (condicao/foil/promo/curio/preco/moeda/notas) numa
+  // unica entrada com a quantidade somada - inverso de splitListItem, mesmo
+  // padrao de mergeCollectionEntriesForCard.
+  function mergeListItemsForCard(listId, cardId) {
+    var list = data.lists.find(function (l) { return l.id === listId; });
+    if (!list) return null;
+    var entries = list.items.filter(function (i) { return i.cardId === cardId; });
+    var others = list.items.filter(function (i) { return i.cardId !== cardId; });
+    var groups = {};
+    var order = [];
+    entries.forEach(function (i) {
+      var key = [i.condition, !!i.isFoil, !!i.isPromo, !!i.isCurio, i.pricePaid != null ? i.pricePaid : "", i.currency || "", i.notes || ""].join("|");
+      if (!groups[key]) { groups[key] = []; order.push(key); }
+      groups[key].push(i);
+    });
+    var merged = order.map(function (key) {
+      var group = groups[key];
+      if (group.length === 1) return group[0];
+      var base = group.slice().sort(function (a, b) { return new Date(a.addedAt) - new Date(b.addedAt); })[0];
+      var totalQty = group.reduce(function (s, i) { return s + i.quantity; }, 0);
+      return Object.assign({}, base, { quantity: totalQty });
+    });
+    list.items = others.concat(merged);
+    list.updatedAt = nowIso();
+    persist();
+    return merged;
+  }
+
+  // Remove uma carta de TODAS as listas que a contem (todas as copias/
+  // entradas dessa carta, mesmo se houver mais de uma com caracteristicas
+  // diferentes) - usado quando a carta e adicionada de fato a colecao
+  // (deixa de fazer sentido continuar numa lista tipo "quero conseguir essa
+  // carta").
   function removeCardFromAllLists(cardId) {
     var touched = false;
     data.lists.forEach(function (l) {
@@ -481,12 +534,15 @@
 
   // Listas que contem esta carta, com a quantidade - usado na aba "Listas" do
   // modal de detalhe da carta.
+  // Soma a quantidade de TODAS as entradas dessa carta numa lista (pode
+  // haver mais de uma, com caracteristicas diferentes - ver addListItem).
   function listsContainingCard(cardId) {
     return data.lists.filter(function (l) {
       return l.items.some(function (i) { return i.cardId === cardId; });
     }).map(function (l) {
-      var item = l.items.find(function (i) { return i.cardId === cardId; });
-      return { list: l, quantity: item.quantity, notes: item.notes };
+      var qty = 0;
+      l.items.forEach(function (i) { if (i.cardId === cardId) qty += i.quantity; });
+      return { list: l, quantity: qty };
     });
   }
 
@@ -610,6 +666,8 @@
     addListItem: addListItem,
     updateListItem: updateListItem,
     removeListItem: removeListItem,
+    splitListItem: splitListItem,
+    mergeListItemsForCard: mergeListItemsForCard,
     removeCardFromAllLists: removeCardFromAllLists,
     listsContainingCard: listsContainingCard,
     toggleListFavorite: toggleListFavorite,

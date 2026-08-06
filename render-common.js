@@ -440,12 +440,12 @@
     if (ctx.type === "list") {
       var list = State.getList(ctx.listId);
       if (!list) return false;
-      var item = list.items.find(function (i) { return i.cardId === ctx.cardId; });
+      var item = list.items.find(function (i) { return i.id === ctx.entryId; });
       if (!item) return false;
       if (delta < 0 && item.quantity <= 1) {
-        State.removeListItem(list.id, ctx.cardId);
+        State.removeListItem(list.id, ctx.entryId);
       } else {
-        State.updateListItem(list.id, ctx.cardId, { quantity: item.quantity + delta });
+        State.updateListItem(list.id, ctx.entryId, { quantity: item.quantity + delta });
       }
       return true;
     }
@@ -644,8 +644,11 @@
     } else if (ctx.source === "list" && ctx.listId) {
       var focusListObj = State.getList(ctx.listId);
       if (focusListObj) {
-        var focusItem = focusListObj.items.find(function (i) { return i.cardId === cardId; });
-        if (focusItem) focusList = { list: focusListObj, item: focusItem };
+        // Pode haver mais de uma entrada dessa carta nessa lista, cada uma
+        // com sua propria classificacao (ver State.addListItem) - mostra
+        // todas, igual ao bloco "Minhas Copias" da Colecao.
+        var focusItems = focusListObj.items.filter(function (i) { return i.cardId === cardId; });
+        if (focusItems.length) focusList = { list: focusListObj, items: focusItems };
       }
     }
 
@@ -707,29 +710,41 @@
         }
       }
     } else if (focusList) {
-      var fl = focusList.list, flItem = focusList.item;
-      html += '<hr class="section-divider"><div class="section-title">Nesta lista</div>' +
-        '<p style="font-size:13px;color:var(--text-secondary);margin-top:-6px;margin-bottom:8px;">' + escapeHtml(fl.name) + "</p>" +
-        '<div class="panel copy-entry"><div class="copy-entry-head">' +
-        '<span class="qty-stepper qty-stepper-sm"><button data-listctx-minus>−</button><span class="qty-val">' + flItem.quantity + '</span><button data-listctx-plus>+</button></span>' +
-        '<select data-listctx-condition>' + CONDITION_LIST.map(function (c) {
-          return '<option value="' + c + '" ' + (flItem.condition === c ? "selected" : "") + '>' + c + "</option>";
-        }).join("") + '</select>' +
+      var fl = focusList.list, flItems = focusList.items;
+      html += '<hr class="section-divider"><div class="section-title copy-section-head">' +
+        '<span>Nesta lista' + (flItems.length > 1 ? " (" + flItems.length + " cópias)" : "") + '</span>' +
+        (flItems.length > 1 ? '<button class="btn btn-sm" id="merge-list-entries-btn">' + Icon("refresh", { cls: "icon-sm" }) + ' Agrupar idênticas</button>' : "") +
         "</div>" +
-        '<div class="chip-row" style="margin-top:8px;">' +
-        '<span class="chip ' + (flItem.isFoil ? "active" : "") + '" data-listctx-toggle-flag="isFoil">' + Icon("sparkle", { cls: "icon-sm" }) + ' Foil</span>' +
-        '<span class="chip ' + (flItem.isPromo ? "active" : "") + '" data-listctx-toggle-flag="isPromo">' + Icon("ribbon", { cls: "icon-sm" }) + ' Promo</span>' +
-        '<span class="chip ' + (flItem.isCurio ? "active" : "") + '" data-listctx-toggle-flag="isCurio">' + Icon("gem", { cls: "icon-sm" }) + ' Curio</span>' +
-        "</div>" +
-        '<div class="form-inline" style="margin-top:8px;">' +
-        '<div class="form-row"><label>Preço pago</label><input type="number" step="0.01" data-listctx-price value="' + (flItem.pricePaid != null ? flItem.pricePaid : "") + '"></div>' +
-        '<div class="form-row"><label>Moeda</label><select data-listctx-currency>' + ["BRL", "USD", "EUR"].map(function (c) {
-          return '<option ' + ((flItem.currency || "BRL") === c ? "selected" : "") + '>' + c + "</option>";
-        }).join("") + '</select></div>' +
-        "</div>" +
-        '<div class="form-row" style="margin-top:8px;"><label>Observação</label><textarea data-listctx-notes placeholder="Notas sobre este item...">' + escapeHtml(flItem.notes || "") + "</textarea></div>" +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">' +
-        '<button class="btn btn-sm btn-danger" data-listctx-remove>' + Icon("trash", { cls: "icon-sm" }) + " Remover da lista</button></div></div>";
+        '<p style="font-size:13px;color:var(--text-secondary);margin-top:-6px;margin-bottom:8px;">' + escapeHtml(fl.name) + "</p>";
+      if (flItems.length > 1) html += '<p style="font-size:12px;color:var(--text-secondary);margin-top:-4px;margin-bottom:10px;">Por padrão, todas as cópias de um mesmo item compartilham as mesmas características. Use "Dividir" numa pilha pra dar características próprias (foil, preço, notas...) a uma cópia específica, ou "Agrupar idênticas" pra juntar de volta cópias com características iguais.</p>';
+      flItems.forEach(function (li, idx) {
+        html += '<div class="panel copy-entry" style="margin-bottom:10px;">';
+        if (flItems.length > 1) html += '<div class="copy-entry-label">Cópia ' + (idx + 1) + '</div>';
+        html += '<div class="copy-entry-head">' +
+          '<span class="qty-stepper qty-stepper-sm"><button data-listctx-minus="' + li.id + '">−</button><span class="qty-val">' + li.quantity + '</span><button data-listctx-plus="' + li.id + '">+</button></span>' +
+          '<select data-listctx-condition="' + li.id + '">' + CONDITION_LIST.map(function (c) {
+            return '<option value="' + c + '" ' + (li.condition === c ? "selected" : "") + '>' + c + "</option>";
+          }).join("") + '</select>' +
+          "</div>";
+        html += '<div class="chip-row" style="margin-top:8px;">' +
+          '<span class="chip ' + (li.isFoil ? "active" : "") + '" data-listctx-toggle-flag="isFoil" data-listctx-entry="' + li.id + '">' + Icon("sparkle", { cls: "icon-sm" }) + ' Foil</span>' +
+          '<span class="chip ' + (li.isPromo ? "active" : "") + '" data-listctx-toggle-flag="isPromo" data-listctx-entry="' + li.id + '">' + Icon("ribbon", { cls: "icon-sm" }) + ' Promo</span>' +
+          '<span class="chip ' + (li.isCurio ? "active" : "") + '" data-listctx-toggle-flag="isCurio" data-listctx-entry="' + li.id + '">' + Icon("gem", { cls: "icon-sm" }) + ' Curio</span>' +
+          "</div>";
+        html += '<div class="form-inline" style="margin-top:8px;">' +
+          '<div class="form-row"><label>Preço pago</label><input type="number" step="0.01" data-listctx-price="' + li.id + '" value="' + (li.pricePaid != null ? li.pricePaid : "") + '"></div>' +
+          '<div class="form-row"><label>Moeda</label><select data-listctx-currency="' + li.id + '">' + ["BRL", "USD", "EUR"].map(function (c) {
+            return '<option ' + ((li.currency || "BRL") === c ? "selected" : "") + '>' + c + "</option>";
+          }).join("") + '</select></div>' +
+          "</div>";
+        html += '<div class="form-row" style="margin-top:2px;margin-bottom:8px;"><label>Observação</label><textarea data-listctx-notes="' + li.id + '" placeholder="Notas sobre este item...">' + escapeHtml(li.notes || "") + "</textarea></div>";
+        html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+        if (li.quantity > 1) {
+          html += '<button class="btn btn-sm" data-listctx-split="' + li.id + '">' + Icon("duplicate", { cls: "icon-sm" }) + ' Dividir em ' + li.quantity + ' cópias individuais</button>';
+        }
+        html += '<button class="btn btn-sm btn-danger" data-listctx-remove="' + li.id + '">' + Icon("trash", { cls: "icon-sm" }) + ' Remover da lista</button>';
+        html += "</div></div>";
+      });
     } else if (totalQty > 0) {
       html += '<hr class="section-divider"><div class="section-title copy-section-head">' +
         '<span>Minha' + (entries.length > 1 ? "s Cópias" : " Cópia") + '</span>' +
@@ -931,55 +946,81 @@
       };
     }
 
-    // ---- Controle de quantidade: item de Lista (quando focusList) ----
+    // ---- Controle de quantidade/classificacao: itens de Lista (quando
+    // focusList) - pode haver mais de uma entrada dessa carta nessa lista
+    // (ver State.addListItem), cada botao/campo e identificado pelo id da
+    // entrada especifica, igual ao bloco "Minhas Copias" da Colecao acima. ----
     if (focusList) {
       var flRef = focusList.list;
-      var listMinusBtn = root.querySelector("[data-listctx-minus]");
-      if (listMinusBtn) listMinusBtn.onclick = function () {
-        var item = flRef.items.find(function (i) { return i.cardId === cardId; });
-        if (!item) return;
-        if (item.quantity <= 1) { State.removeListItem(flRef.id, cardId); } else { State.updateListItem(flRef.id, cardId, { quantity: item.quantity - 1 }); }
-        openCardDetail(cardId, ctx);
-      };
-      var listPlusBtn = root.querySelector("[data-listctx-plus]");
-      if (listPlusBtn) listPlusBtn.onclick = function () {
-        var item = flRef.items.find(function (i) { return i.cardId === cardId; });
-        if (!item) return;
-        State.updateListItem(flRef.id, cardId, { quantity: item.quantity + 1 });
-        openCardDetail(cardId, ctx);
-      };
-      var listConditionSel = root.querySelector("[data-listctx-condition]");
-      if (listConditionSel) listConditionSel.onchange = function () {
-        State.updateListItem(flRef.id, cardId, { condition: listConditionSel.value });
-        openCardDetail(cardId, ctx);
-      };
-      root.querySelectorAll("[data-listctx-toggle-flag]").forEach(function (chip) {
-        chip.onclick = function () {
-          var flag = chip.getAttribute("data-listctx-toggle-flag");
-          var item = flRef.items.find(function (i) { return i.cardId === cardId; });
-          var patch = {};
-          patch[flag] = !(item && item[flag]);
-          State.updateListItem(flRef.id, cardId, patch);
+      root.querySelectorAll("[data-listctx-plus]").forEach(function (b) {
+        b.onclick = function () {
+          var id = b.getAttribute("data-listctx-plus");
+          var item = flRef.items.find(function (i) { return i.id === id; });
+          if (!item) return;
+          State.updateListItem(flRef.id, id, { quantity: item.quantity + 1 });
           openCardDetail(cardId, ctx);
         };
       });
-      var listPriceInp = root.querySelector("[data-listctx-price]");
-      if (listPriceInp) listPriceInp.onchange = function () {
-        State.updateListItem(flRef.id, cardId, { pricePaid: listPriceInp.value ? parseFloat(listPriceInp.value) : undefined });
-        openCardDetail(cardId, ctx);
-      };
-      var listCurrencySel = root.querySelector("[data-listctx-currency]");
-      if (listCurrencySel) listCurrencySel.onchange = function () {
-        State.updateListItem(flRef.id, cardId, { currency: listCurrencySel.value });
-        openCardDetail(cardId, ctx);
-      };
-      var listNotesTa = root.querySelector("[data-listctx-notes]");
-      if (listNotesTa) listNotesTa.onchange = function () {
-        State.updateListItem(flRef.id, cardId, { notes: listNotesTa.value });
-      };
-      var listRemoveBtn = root.querySelector("[data-listctx-remove]");
-      if (listRemoveBtn) listRemoveBtn.onclick = function () {
-        State.removeListItem(flRef.id, cardId);
+      root.querySelectorAll("[data-listctx-minus]").forEach(function (b) {
+        b.onclick = function () {
+          var id = b.getAttribute("data-listctx-minus");
+          var item = flRef.items.find(function (i) { return i.id === id; });
+          if (!item) return;
+          if (item.quantity <= 1) { State.removeListItem(flRef.id, id); } else { State.updateListItem(flRef.id, id, { quantity: item.quantity - 1 }); }
+          openCardDetail(cardId, ctx);
+        };
+      });
+      root.querySelectorAll("[data-listctx-condition]").forEach(function (sel) {
+        sel.onchange = function () {
+          State.updateListItem(flRef.id, sel.getAttribute("data-listctx-condition"), { condition: sel.value });
+          openCardDetail(cardId, ctx);
+        };
+      });
+      root.querySelectorAll("[data-listctx-toggle-flag]").forEach(function (chip) {
+        chip.onclick = function () {
+          var id = chip.getAttribute("data-listctx-entry");
+          var flag = chip.getAttribute("data-listctx-toggle-flag");
+          var item = flRef.items.find(function (i) { return i.id === id; });
+          var patch = {};
+          patch[flag] = !(item && item[flag]);
+          State.updateListItem(flRef.id, id, patch);
+          openCardDetail(cardId, ctx);
+        };
+      });
+      root.querySelectorAll("[data-listctx-price]").forEach(function (inp) {
+        inp.onchange = function () {
+          State.updateListItem(flRef.id, inp.getAttribute("data-listctx-price"), { pricePaid: inp.value ? parseFloat(inp.value) : undefined });
+          openCardDetail(cardId, ctx);
+        };
+      });
+      root.querySelectorAll("[data-listctx-currency]").forEach(function (sel) {
+        sel.onchange = function () {
+          State.updateListItem(flRef.id, sel.getAttribute("data-listctx-currency"), { currency: sel.value });
+          openCardDetail(cardId, ctx);
+        };
+      });
+      root.querySelectorAll("[data-listctx-notes]").forEach(function (ta) {
+        ta.onchange = function () {
+          State.updateListItem(flRef.id, ta.getAttribute("data-listctx-notes"), { notes: ta.value });
+        };
+      });
+      root.querySelectorAll("[data-listctx-split]").forEach(function (b) {
+        b.onclick = function () {
+          if (confirm("Dividir esta pilha em cópias individuais? Cada uma poderá ter sua própria condição, foil, preço e notas.")) {
+            State.splitListItem(flRef.id, b.getAttribute("data-listctx-split"));
+            openCardDetail(cardId, ctx);
+          }
+        };
+      });
+      root.querySelectorAll("[data-listctx-remove]").forEach(function (b) {
+        b.onclick = function () {
+          State.removeListItem(flRef.id, b.getAttribute("data-listctx-remove"));
+          openCardDetail(cardId, ctx);
+        };
+      });
+      var mergeListBtn = root.querySelector("#merge-list-entries-btn");
+      if (mergeListBtn) mergeListBtn.onclick = function () {
+        State.mergeListItemsForCard(flRef.id, cardId);
         openCardDetail(cardId, ctx);
       };
     }

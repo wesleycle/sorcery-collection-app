@@ -184,11 +184,15 @@
     if (!slot) return;
     var byType = {};
     var sumPrice = 0;
+    // Preco pago agora e um campo do proprio item da lista (ver
+    // openListItemForm) - soma direto por entrada, sem reconsultar a
+    // Colecao (o que faria duplicar o valor quando ha mais de uma entrada
+    // da mesma carta na lista, ver State.addListItem).
     list.items.forEach(function (i) {
       var c = State.getCatalogCard(i.cardId);
       var t = c ? c.type : "?";
       byType[t] = (byType[t] || 0) + i.quantity;
-      State.getCollectionEntriesForCard(i.cardId).forEach(function (e) { if (e.pricePaid) sumPrice += e.pricePaid; });
+      if (i.pricePaid) sumPrice += i.pricePaid;
     });
     slot.innerHTML = '<div class="list-indicators">' +
       "<span><strong>" + list.items.length + "</strong> itens</span>" +
@@ -231,12 +235,16 @@
   // (.card-grid/.card-tile/.card-list/.card-row) pra manter a aparencia
   // identica, so acrescentando uma barra de acoes.
   function itemActionsHtml(item, listId) {
-    var qtyCtx = UI.escapeHtml(JSON.stringify({ type: "list", listId: listId, cardId: item.cardId }));
+    // item.id identifica essa entrada especifica - uma lista pode ter mais
+    // de uma copia da mesma carta, cada uma com sua propria classificacao
+    // (ver State.addListItem/splitListItem), entao toda acao aqui e por id
+    // da entrada, nao mais por cardId.
+    var qtyCtx = UI.escapeHtml(JSON.stringify({ type: "list", listId: listId, entryId: item.id }));
     return '<div class="list-item-actions">' +
       '<span class="qty-stepper qty-stepper-sm"><button data-qty-minus=\'' + qtyCtx + '\'>−</button><span class="qty-val">' + item.quantity + '</span><button data-qty-plus=\'' + qtyCtx + '\'>+</button></span>' +
-      '<button class="btn btn-sm btn-success" data-have="' + item.cardId + '" title="Já tenho, mover para a coleção">' + Icon("check", { cls: "icon-sm" }) + " Tenho!</button>" +
-      '<button class="btn btn-sm" data-edit-item="' + item.cardId + '" title="Editar quantidade/notas">' + Icon("edit", { cls: "icon-sm" }) + "</button>" +
-      '<button class="btn btn-sm btn-danger" data-remove-item="' + item.cardId + '" title="Remover">' + Icon("trash", { cls: "icon-sm" }) + "</button>" +
+      '<button class="btn btn-sm btn-success" data-have="' + item.id + '" data-have-card="' + item.cardId + '" title="Já tenho, mover para a coleção">' + Icon("check", { cls: "icon-sm" }) + " Tenho!</button>" +
+      '<button class="btn btn-sm" data-edit-item="' + item.id + '" title="Editar">' + Icon("edit", { cls: "icon-sm" }) + "</button>" +
+      '<button class="btn btn-sm btn-danger" data-remove-item="' + item.id + '" title="Remover">' + Icon("trash", { cls: "icon-sm" }) + "</button>" +
       "</div>";
   }
 
@@ -305,15 +313,20 @@
     // "Data de adicao"/"Preco pago" (collectionSort) usam os campos do
     // proprio item da lista agora - mesmo padrao da Colecao, so que a fonte
     // e a classificacao feita direto na lista (ver openListItemForm).
-    var itemByCardId = {};
-    entries.forEach(function (e) { itemByCardId[e.card.id] = e.item; });
-    var sortedCards = UI.sortCards(entries.map(function (e) { return e.card; }), filters.sortBy, function (c) {
-      var it = itemByCardId[c.id];
+    // Importante: agora pode haver mais de uma entrada da MESMA carta na
+    // lista (copias com caracteristicas diferentes - ver State.addListItem),
+    // entao nao da pra indexar por card.id (colidiria). UI.sortCards espera
+    // uma lista de "cards" - passamos um clone de cada card marcado com o id
+    // da propria entrada (_entryId), pra poder recuperar a entrada certa
+    // depois de ordenar mesmo com cartas repetidas.
+    var byEntryId = {};
+    entries.forEach(function (e) { byEntryId[e.item.id] = e; });
+    var cardsForSort = entries.map(function (e) { return Object.assign({}, e.card, { _entryId: e.item.id }); });
+    var sortedCardsForSort = UI.sortCards(cardsForSort, filters.sortBy, function (c) {
+      var it = byEntryId[c._entryId] && byEntryId[c._entryId].item;
       return { addedAt: it ? it.addedAt : null, pricePaid: it ? (it.pricePaid || 0) : 0 };
     });
-    var byId = {};
-    entries.forEach(function (e) { byId[e.card.id] = e; });
-    var sortedEntries = sortedCards.map(function (c) { return byId[c.id]; });
+    var sortedEntries = sortedCardsForSort.map(function (c) { return byEntryId[c._entryId]; });
 
     if (viewMode === "list") {
       slot.innerHTML = '<div class="card-list">' + sortedEntries.map(function (e) { return listRowHtml(e.item, e.card, list.id); }).join("") + "</div>";
@@ -329,10 +342,14 @@
     slot.querySelectorAll("[data-have]").forEach(function (b) {
       b.onclick = function (e) {
         e.stopPropagation();
-        var cardId = b.getAttribute("data-have");
+        var entryId = b.getAttribute("data-have");
+        var cardId = b.getAttribute("data-have-card");
         Modal.close();
         UI.openCollectionEntryForm(cardId, null, { source: "list" });
-        State.removeListItem(list.id, cardId);
+        // So remove ESSA copia especifica da lista - se houver outras copias
+        // dessa mesma carta na lista com caracteristicas diferentes, elas
+        // continuam la.
+        State.removeListItem(list.id, entryId);
         setTimeout(function () { renderItems(container, list); renderIndicators(container, list); }, 50);
       };
     });
@@ -347,9 +364,10 @@
     slot.querySelectorAll("[data-edit-item]").forEach(function (b) {
       b.onclick = function (e) {
         e.stopPropagation();
-        var cardId = b.getAttribute("data-edit-item");
-        var item = list.items.find(function (i) { return i.cardId === cardId; });
-        openListItemForm(list, cardId, item, container);
+        var itemId = b.getAttribute("data-edit-item");
+        var item = list.items.find(function (i) { return i.id === itemId; });
+        if (!item) return;
+        openListItemForm(list, item.cardId, item, container);
       };
     });
   }
@@ -360,6 +378,7 @@
       '<input type="text" class="search-bar" id="list-pick-search" style="width:100%;margin-bottom:10px;" placeholder="Buscar carta...">' +
       '<div id="list-pick-results"></div>';
     var root = Modal.open(html);
+    root.querySelector("#list-pick-search").focus();
     root.querySelector("#list-pick-search").oninput = function (e) {
       var q = e.target.value.toLowerCase();
       var results = q.length < 2 ? [] : catalog.filter(function (c) { return c.name.toLowerCase().indexOf(q) !== -1; }).slice(0, 15);
@@ -430,7 +449,7 @@
         State.addListItem(list.id, fields);
         Toast.show('Adicionado à lista "' + list.name + '".');
       } else {
-        State.updateListItem(list.id, cardId, fields);
+        State.updateListItem(list.id, item.id, fields);
         Toast.show("Item atualizado.");
       }
       Modal.close();
