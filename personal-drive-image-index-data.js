@@ -22,9 +22,10 @@
  * data.personalDriveImageIndex (ver state.js) apenas na primeira vez que o
  * app roda - depois disso, o indice salvo nos dados do usuario e que vale.
  *
- * Estado atual: 3082 imagens, coletadas em 2026-08-04 varrendo por completo
- * as subpastas alp (817), art (452), bet (812), dra (26), got (891)
- * e pro (84) da pasta pessoal do usuario no Drive.
+ * Estado atual: 3090 imagens, coletadas em 2026-08-04 (alp/art/bet/dra/got)
+ * e 2026-08-07 (8 novas em pro) varrendo por completo as subpastas alp (817),
+ * art (452), bet (812), dra (26), got (891) e pro (92) da pasta pessoal do
+ * usuario no Drive.
  */
 (function () {
   "use strict";
@@ -3044,6 +3045,8 @@
     "pro-camelot-d-f.png": "1k5HamwxSfMEJ0Ihq8wpYE_v5LXMSzbqH",
     "pro-city_of_glass-scg-f.png": "1xhJ8HKT4Ys42nfjNH8lL9KyNxuf2PWku",
     "pro-cloud_city-d-f.png": "17Rc4XWzwgMsgU0ba2vzFDpkMb9NJ2hTk",
+    "pro-court_of_equity-d-f.png": "1e2TGsyEu2gBozoyWDYo4LWnMm1F7vsCE",
+    "pro-court_of_equity-d-s.png": "1KW8UpZgk5P2qXKG-ShUnrM1UW8uttjWH",
     "pro-dark_tower-op-f.png": "1iYGSYUziq3idLQvl3ssgd5pAu57xRXA-",
     "pro-day_of_judgment-op-f.png": "17kZiMIDaCTBDsAuU49Zn5T02XDnWzJOK",
     "pro-deathspeaker-op-rf.png": "16CZCsEJCP1ej-8tvJ4A7njfYTrad410r",
@@ -3074,7 +3077,13 @@
     "pro-king_arthur-d-f.png": "1cUvKiWa5e8V22LFxt2iHJakyIwin0yOR",
     "pro-lightning_bolt-tc-f.png": "1HC-h2vnB9e6mgwQaenvNLbyvCmBtzn9j",
     "pro-lone_tower-op-f.png": "1XN2usR1dLrUYR3MSJ_QU-EnoucAo-N0c",
+    "pro-mobbed_court-d-f.png": "1SFB3KUXrSCw-I_x_ZZ9TGMNhH82AuBPK",
+    "pro-mobbed_court-d-s.png": "18HkdTmz0He3jc_0VbbWAk17x3ON_DHwG",
+    "pro-mock_court-d-f.png": "1KY3uScmzIru4aFVbs3aVBcUixV40DowU",
+    "pro-mock_court-d-s.png": "1NpYXRzdMtRjaUPCUPo1I9fhch4a92i3P",
     "pro-occult_ritual-k-s.png": "1X90AnAJHdOXEFoC5Qzjw5EyXNas2DREl",
+    "pro-overflowing_court-d-f.png": "1t5DLADcoUXuZ3qjHp3F3TFGjpNrXUoV2",
+    "pro-overflowing_court-d-s.png": "1gml9NBiseflVzlpFYVi5dRtkZKrBI-mI",
     "pro-pathfinder-op-rf.png": "1VUweLzkERDa8cnoWAbJ3F6OH1LkWClKA",
     "pro-pudge_butcher-d-s.png": "1GZM01sp-MmEl6FXiY0KHPCXP8NMeCU1n",
     "pro-relentless_crowd-k-s.png": "1AT2eZa1E878lunB2UfSn-2U2a9xpus3T",
@@ -3117,5 +3126,5 @@
   // Versao deste snapshot - mude sempre que regenerar o indice (nova
   // coleta/merge de pastas do Drive), pra o app aplicar automaticamente no
   // proximo carregamento de pagina (ver applyBundledUpdatesIfNewer em app.js).
-  window.PERSONAL_DRIVE_IMAGE_INDEX_VERSION = "2026-08-04";
+  window.PERSONAL_DRIVE_IMAGE_INDEX_VERSION = "2026-08-07";
 })();
