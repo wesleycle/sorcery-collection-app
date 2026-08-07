@@ -7497,7 +7497,7 @@
     "defaultCurrency": "BRL",
     "collectionViewMode": "grid",
     "catalogViewMode": "grid",
-    "deckViewMode": "list",
+    "deckViewMode": "build",
     "listsViewMode": "grid",
     "lastCatalogUpdate": "2026-08-07T22:06:34.739Z",
     "driveImageIndexLastUpdate": "2026-08-04T02:22:50.015Z",
