@@ -7776,29 +7776,43 @@
           "isFoil": false,
           "isPromo": false,
           "isCurio": false,
-          "addedAt": "2026-08-06T05:19:41.371Z"
+          "addedAt": "2026-08-06T05:19:41.371Z",
+          "id": "497f1596-b089-4923-b537-c6d106a84387"
         },
         {
           "cardId": "bet-poison_nova",
-          "quantity": 4,
+          "quantity": 1,
+          "condition": "NM",
+          "currency": "BRL",
+          "isFoil": true,
+          "isPromo": false,
+          "isCurio": false,
+          "notes": "",
+          "addedAt": "2026-08-06T19:28:28.171Z",
+          "id": "fa306247-9d55-47d7-a736-6cbdebbf230e"
+        },
+        {
+          "cardId": "bet-poison_nova",
+          "quantity": 2,
           "condition": "NM",
           "currency": "BRL",
           "isFoil": false,
           "isPromo": false,
           "isCurio": false,
           "notes": "",
-          "addedAt": "2026-08-06T19:28:28.171Z"
+          "addedAt": "2026-08-06T19:28:28.171Z",
+          "id": "553e0a12-8ad0-4a29-b391-72dfb1abd625"
         }
       ],
       "isFavorite": false,
       "createdAt": "2026-08-06T05:19:41.371Z",
-      "updatedAt": "2026-08-06T19:33:55.095Z"
+      "updatedAt": "2026-08-06T19:55:05.041Z"
     }
   ],
   "settings": {
     "catalogUpdateUrl": "",
     "defaultCurrency": "BRL",
-    "collectionViewMode": "list",
+    "collectionViewMode": "grid",
     "catalogViewMode": "grid",
     "deckViewMode": "images",
     "listsViewMode": "list",
