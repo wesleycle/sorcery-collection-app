@@ -78,6 +78,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:44:05.276Z",
       "updatedAt": "2026-08-09T04:44:05.276Z"
+    },
+    {
+      "id": "46f07118-3e05-4afd-a4b1-8d4a71a31000",
+      "cardId": "bet-seer",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:44:14.908Z",
+      "updatedAt": "2026-08-09T04:44:14.908Z"
     }
   ],
   "decks": [],
