@@ -39,6 +39,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:42:59.478Z",
       "updatedAt": "2026-08-09T04:42:59.478Z"
+    },
+    {
+      "id": "3be2dd36-b364-4778-9a53-9f8549d311dc",
+      "cardId": "bet-deathspeaker",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:43:16.141Z",
+      "updatedAt": "2026-08-09T04:43:16.141Z"
     }
   ],
   "decks": [],
