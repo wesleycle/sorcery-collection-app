@@ -221,6 +221,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:46:01.257Z",
       "updatedAt": "2026-08-09T04:46:01.258Z"
+    },
+    {
+      "id": "3716a027-0c51-4161-9ce0-d6acd5a691b6",
+      "cardId": "got-interrogator",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:46:08.857Z",
+      "updatedAt": "2026-08-09T04:46:08.857Z"
     }
   ],
   "decks": [],
