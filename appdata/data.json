@@ -156,6 +156,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:45:08.051Z",
       "updatedAt": "2026-08-09T04:45:08.051Z"
+    },
+    {
+      "id": "ca2b121b-2d2b-4fdf-91d5-a01d74e5d6f9",
+      "cardId": "art-witch",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:45:23.170Z",
+      "updatedAt": "2026-08-09T04:45:23.170Z"
     }
   ],
   "decks": [],
