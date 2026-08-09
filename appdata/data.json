@@ -286,6 +286,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:46:46.401Z",
       "updatedAt": "2026-08-09T04:46:46.401Z"
+    },
+    {
+      "id": "d2259188-bcc4-4176-9bc5-af8cd98d8698",
+      "cardId": "got-savior",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:46:56.784Z",
+      "updatedAt": "2026-08-09T04:46:56.784Z"
     }
   ],
   "decks": [],
