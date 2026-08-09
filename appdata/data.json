@@ -182,6 +182,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:45:34.194Z",
       "updatedAt": "2026-08-09T04:45:34.194Z"
+    },
+    {
+      "id": "08c7081d-ed8c-4ae8-b974-a44ef866338c",
+      "cardId": "got-corruptor",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:45:42.058Z",
+      "updatedAt": "2026-08-09T04:45:42.058Z"
     }
   ],
   "decks": [],
