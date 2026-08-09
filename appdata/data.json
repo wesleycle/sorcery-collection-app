@@ -273,6 +273,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:46:37.329Z",
       "updatedAt": "2026-08-09T04:46:37.329Z"
+    },
+    {
+      "id": "4b67997f-5738-4f38-be8a-226f82c30328",
+      "cardId": "got-realm_eater",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:46:46.401Z",
+      "updatedAt": "2026-08-09T04:46:46.401Z"
     }
   ],
   "decks": [],
