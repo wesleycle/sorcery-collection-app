@@ -234,6 +234,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:46:08.857Z",
       "updatedAt": "2026-08-09T04:46:08.857Z"
+    },
+    {
+      "id": "163cfaf8-dde1-4f54-a416-30c97fd37304",
+      "cardId": "got-ironclad",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:46:16.058Z",
+      "updatedAt": "2026-08-09T04:46:16.058Z"
     }
   ],
   "decks": [],
