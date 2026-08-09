@@ -169,6 +169,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:45:23.170Z",
       "updatedAt": "2026-08-09T04:45:23.170Z"
+    },
+    {
+      "id": "3079c75a-4e27-427b-804e-4422b9ac39c8",
+      "cardId": "got-bladedancer",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:45:34.194Z",
+      "updatedAt": "2026-08-09T04:45:34.194Z"
     }
   ],
   "decks": [],
