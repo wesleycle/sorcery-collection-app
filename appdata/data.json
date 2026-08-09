@@ -247,6 +247,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:46:16.058Z",
       "updatedAt": "2026-08-09T04:46:16.058Z"
+    },
+    {
+      "id": "b3f61158-c4e1-4fba-af90-b355111a1741",
+      "cardId": "got-necromancer",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:46:28.601Z",
+      "updatedAt": "2026-08-09T04:46:28.601Z"
     }
   ],
   "decks": [],
