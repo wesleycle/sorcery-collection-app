@@ -1,6 +1,20 @@
 {
   "schemaVersion": 1,
-  "collection": [],
+  "collection": [
+    {
+      "id": "a9cfa092-279b-41f5-a3ee-3c06071ff229",
+      "cardId": "bet-battlemage",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:42:13.743Z",
+      "updatedAt": "2026-08-09T04:42:13.743Z"
+    }
+  ],
   "decks": [],
   "lists": [],
   "settings": {
