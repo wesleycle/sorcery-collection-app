@@ -91,6 +91,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:44:14.908Z",
       "updatedAt": "2026-08-09T04:44:14.908Z"
+    },
+    {
+      "id": "225774d8-052f-408b-98b8-014767e9ce52",
+      "cardId": "bet-sorcerer",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:44:28.519Z",
+      "updatedAt": "2026-08-09T04:44:28.519Z"
     }
   ],
   "decks": [],
