@@ -208,6 +208,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:45:51.962Z",
       "updatedAt": "2026-08-09T04:45:51.962Z"
+    },
+    {
+      "id": "5b94e18c-3735-4e1b-8543-a3fd6c3f2161",
+      "cardId": "got-imposter",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:46:01.257Z",
+      "updatedAt": "2026-08-09T04:46:01.258Z"
     }
   ],
   "decks": [],
