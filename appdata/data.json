@@ -117,6 +117,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:44:40.004Z",
       "updatedAt": "2026-08-09T04:44:40.004Z"
+    },
+    {
+      "id": "b23235cf-47e5-4001-816f-91cbda4c79d4",
+      "cardId": "art-archimago",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:44:48.589Z",
+      "updatedAt": "2026-08-09T04:44:48.589Z"
     }
   ],
   "decks": [],
