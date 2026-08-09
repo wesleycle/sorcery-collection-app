@@ -130,6 +130,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:44:48.589Z",
       "updatedAt": "2026-08-09T04:44:48.589Z"
+    },
+    {
+      "id": "41645307-4c89-47ac-a263-a515f3cf5347",
+      "cardId": "art-druid",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:44:56.547Z",
+      "updatedAt": "2026-08-09T04:44:56.547Z"
     }
   ],
   "decks": [],
