@@ -260,6 +260,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:46:28.601Z",
       "updatedAt": "2026-08-09T04:46:28.601Z"
+    },
+    {
+      "id": "ae92a84f-eb2e-404b-b0f2-ce993196b36e",
+      "cardId": "got-persecutor",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:46:37.329Z",
+      "updatedAt": "2026-08-09T04:46:37.329Z"
     }
   ],
   "decks": [],
