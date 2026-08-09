@@ -39,6 +39,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:43:16.141Z",
       "updatedAt": "2026-08-09T04:43:16.141Z"
+    },
+    {
+      "id": "1cb2f972-379f-4191-b131-24bd6346fb6c",
+      "cardId": "bet-enchantress",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:43:40.917Z",
+      "updatedAt": "2026-08-09T04:43:40.917Z"
     }
   ],
   "decks": [],
