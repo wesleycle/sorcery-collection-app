@@ -104,6 +104,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:44:28.519Z",
       "updatedAt": "2026-08-09T04:44:28.519Z"
+    },
+    {
+      "id": "e4139f22-bd07-44f7-b1bf-7f0b8ba360f3",
+      "cardId": "bet-waveshaper",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:44:40.004Z",
+      "updatedAt": "2026-08-09T04:44:40.004Z"
     }
   ],
   "decks": [],
