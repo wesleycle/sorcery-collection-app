@@ -195,6 +195,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:45:42.058Z",
       "updatedAt": "2026-08-09T04:45:42.058Z"
+    },
+    {
+      "id": "d59cc60c-8191-4965-bd79-2a554bbf26bf",
+      "cardId": "got-harbinger",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:45:51.962Z",
+      "updatedAt": "2026-08-09T04:45:51.962Z"
     }
   ],
   "decks": [],
