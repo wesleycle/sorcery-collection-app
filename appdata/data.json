@@ -65,6 +65,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:43:55.156Z",
       "updatedAt": "2026-08-09T04:43:55.156Z"
+    },
+    {
+      "id": "61d4b60f-f13d-41d7-8592-37dc3f5b52f4",
+      "cardId": "bet-geomancer",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": true,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:44:05.276Z",
+      "updatedAt": "2026-08-09T04:44:05.276Z"
     }
   ],
   "decks": [],
