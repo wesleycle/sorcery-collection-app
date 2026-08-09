@@ -143,6 +143,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:44:56.547Z",
       "updatedAt": "2026-08-09T04:44:56.547Z"
+    },
+    {
+      "id": "3085ef08-41ca-4e2e-9b88-c208bfe79530",
+      "cardId": "art-templar",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:45:08.051Z",
+      "updatedAt": "2026-08-09T04:45:08.051Z"
     }
   ],
   "decks": [],
