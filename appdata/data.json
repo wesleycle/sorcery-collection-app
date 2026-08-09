@@ -26,6 +26,19 @@
       "notes": "",
       "addedAt": "2026-08-09T04:42:46.334Z",
       "updatedAt": "2026-08-09T04:42:46.334Z"
+    },
+    {
+      "id": "786625a8-8afd-46a6-a04e-b07c39673b48",
+      "cardId": "bet-elementalist",
+      "quantity": 1,
+      "condition": "NM",
+      "currency": "BRL",
+      "isFoil": false,
+      "isPromo": false,
+      "isCurio": false,
+      "notes": "",
+      "addedAt": "2026-08-09T04:42:59.478Z",
+      "updatedAt": "2026-08-09T04:42:59.478Z"
     }
   ],
   "decks": [],
