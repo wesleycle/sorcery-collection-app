@@ -176,6 +176,49 @@ topo dos dois arquivos de função, já que não são segredo.
 
 ---
 
+## Rodar localmente (sem depender do Netlify)
+
+Além de acessar pelo link do Netlify, dá pra rodar o app **inteiro na sua
+própria máquina** — mesma sincronização com o GitHub, mesmas imagens do
+Google Drive, mesmo código — sem precisar de conta ou serviço Netlify
+nenhum. Único requisito: **Node.js 18 ou mais novo** instalado (já traz
+`fetch()` nativo, não precisa de `npm install` nem de nenhuma dependência).
+
+**Por que isso funciona sem mudar nada do app:** o servidor local
+(`local-server.js`) serve os arquivos estáticos do jeito normal e responde
+nas mesmas rotas que o Netlify expõe
+(`/.netlify/functions/data-get`/`data-save`/`catalog-fetch`), chamando o
+`exports.handler` de cada arquivo em `netlify/functions/*.js` **sem alterar
+uma linha desses arquivos**. Pro navegador (e pro `dataSync.js`/`sorceryApi.js`,
+que são quem chama essas rotas) não existe diferença nenhuma entre estar
+rodando no Netlify ou local — é o mesmo código de sincronização com o
+GitHub, o mesmo token, o mesmo repositório.
+
+**Passo a passo:**
+
+1. Copie `.env.local.example` para `.env.local` (mesma pasta do projeto) e
+   preencha `GH_DATA_TOKEN` com o mesmo Personal Access Token usado no
+   Netlify (veja "Para reconfigurar" logo acima — pode gerar um token novo
+   ou reusar o mesmo, já que ele só precisa de acesso a este repositório).
+   `.env.local` nunca é commitado (está no `.gitignore`) — o token fica só
+   na sua máquina.
+2. Rode `node local-server.js` na pasta do projeto.
+3. Abra `http://localhost:5500` no navegador (a porta pode ser trocada
+   definindo a variável de ambiente `PORT` antes de rodar).
+
+Dá pra alternar livremente entre o link do Netlify e `localhost` — os dois
+leem/gravam o mesmo `appdata/data.json` no GitHub, então o que for feito
+num lado aparece no outro (respeitando o debounce de ~2,5s de
+`dataSync.js`). As imagens continuam vindo direto do Google Drive nos dois
+casos, sem nenhuma configuração extra.
+
+Sem `.env.local` configurado, o app local ainda abre e funciona
+normalmente com os dados salvos no `localStorage` do navegador — só a
+sincronização entre dispositivos via GitHub fica desativada (mesmo
+comportamento de quando o Netlify está sem `GH_DATA_TOKEN` configurado).
+
+---
+
 ## Início (Home): favoritos e indicadores da coleção
 
 A tela **Início** é um painel com atalhos e números úteis, montado a partir dos
@@ -435,6 +478,8 @@ sorcery-app/
 ├── sorcery-api-cards-data.js - snapshot estático da resposta da API oficial (window.SORCERY_API_CARDS_SNAPSHOT + SORCERY_API_SNAPSHOT_VERSION, ver nota de CORS acima)
 ├── storage.js           - persistência: localStorage + Exportar/Importar Backup
 ├── dataSync.js           - sincronização automática e silenciosa do data.json via Netlify Functions (ver nota de manutenção acima)
+├── local-server.js       - servidor local (Node puro) pra rodar o app sem Netlify, reusando as mesmas Functions (ver "Rodar localmente" acima)
+├── .env.local.example    - modelo do token pra local-server.js (copiar pra .env.local, nunca commitar)
 ├── netlify/functions/data-get.js  - lê o data.json do GitHub (server-side, token só aqui)
 ├── netlify/functions/data-save.js - grava o data.json no GitHub (server-side, token só aqui)
 ├── netlify/functions/catalog-fetch.js - proxy server-side (sem token) pra API oficial de cartas, usado pelo botão "Atualizar base cartas"

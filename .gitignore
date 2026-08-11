@@ -16,6 +16,10 @@ onedrive-image-links.csv
 onedrive-image-links.js.bak
 build-image-links.py
 
+# Token do GitHub para rodar local-server.js fora do Netlify (ver
+# .env.local.example) - nunca commitar o token de verdade.
+.env.local
+
 # SO / editor
 .DS_Store
 Thumbs.db
