@@ -194,7 +194,16 @@ que são quem chama essas rotas) não existe diferença nenhuma entre estar
 rodando no Netlify ou local — é o mesmo código de sincronização com o
 GitHub, o mesmo token, o mesmo repositório.
 
-**Passo a passo:**
+**Jeito mais simples (Windows): dê dois cliques em `iniciar.bat`.**
+
+Na primeira vez, ele confere se o Node está instalado, cria o `.env.local` a
+partir do modelo e abre o Bloco de Notas pra você colar o token (veja abaixo
+como gerar um) — depois é só rodar `iniciar.bat` de novo. Nas próximas vezes,
+ele já sobe o servidor e abre o navegador sozinho em `http://localhost:5500`.
+Pra desligar, é só fechar a janela do terminal que ele abre (ou apertar
+Ctrl+C nela).
+
+**Passo a passo manual (qualquer sistema, via terminal):**
 
 1. Copie `.env.local.example` para `.env.local` (mesma pasta do projeto) e
    preencha `GH_DATA_TOKEN` com o mesmo Personal Access Token usado no
@@ -479,6 +488,7 @@ sorcery-app/
 ├── storage.js           - persistência: localStorage + Exportar/Importar Backup
 ├── dataSync.js           - sincronização automática e silenciosa do data.json via Netlify Functions (ver nota de manutenção acima)
 ├── local-server.js       - servidor local (Node puro) pra rodar o app sem Netlify, reusando as mesmas Functions (ver "Rodar localmente" acima)
+├── iniciar.bat           - atalho Windows: dois cliques e já sobe o local-server.js + abre o navegador
 ├── .env.local.example    - modelo do token pra local-server.js (copiar pra .env.local, nunca commitar)
 ├── netlify/functions/data-get.js  - lê o data.json do GitHub (server-side, token só aqui)
 ├── netlify/functions/data-save.js - grava o data.json no GitHub (server-side, token só aqui)
